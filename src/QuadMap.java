@@ -10,9 +10,21 @@ public class QuadMap
 {
 	Square[][] strips;
 
+	double scaling = 1;
+
 	public QuadMap(gridFloatReader gfl, Color lowColor, Color highColor)
 	{
 		strips = new Square[gfl.nrows][gfl.ncols];
+	}
+	public QuadMap(gridFloatReader gfl, Color lowColor, Color highColor, double scale)
+	{
+		this(gfl, lowColor, highColor);
+		scaling = scale;
+	}
+
+	public void SetScale(double scale)
+	{
+		scaling = scale;
 	}
 
 	public void DrawArea(GL2 gl)
@@ -26,9 +38,10 @@ public class QuadMap
 	{
 		gl.glBegin(GL2.GL_QUADS);
 		{
-			for (int x = 0; x < strips[0].length; x++)
+			for (int x = 0; x < strips[strip].length; x++)
 			{
-
+				//x,y,z, y is height.
+				strips[strip][x].QuadInstructions(gl);
 			}
 		}
 	}

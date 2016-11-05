@@ -37,13 +37,16 @@ public class Square
 
 		boolean[][] overUnder = new boolean[2][2];
 
-		for(int x = 0; x < 2; x++)
+		for (int x = 0; x < 2; x++)
 		{
-			for(int y = 0; y < 2; y++)
+			for (int y = 0; y < 2; y++)
 			{
 				overUnder[x][y] = heights[x][y] > height;
 			}
 		}
+
+
+
 
 		//left = 0
 		//top = 1
@@ -114,6 +117,16 @@ public class Square
 			}
 			gl.glEnd();
 		}
+
+	}
+
+
+	public void QuadInstructions(GL2 gl)
+	{
+		gl.glVertex3d(corners[1][1].x, corners[1][1].y, heights[1][1]);
+		gl.glVertex3d(corners[0][1].x, corners[0][1].y, heights[0][1]);
+		gl.glVertex3d(corners[1][0].x, corners[1][0].y, heights[1][0]);
+		gl.glVertex3d(corners[0][0].x, corners[0][0].y, heights[0][0]);
 
 	}
 }
