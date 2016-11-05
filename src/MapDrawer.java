@@ -23,11 +23,15 @@ public class MapDrawer extends Frame implements GLEventListener
 
 	static gridFloatReader gfl ;
 
+
+
 	float height = 600;
 	float width = 1200;
 
 	static public double low, high;
 	static public int stepNum, lowR, lowG, lowB, highR, highG, highB;
+
+	public static QuadMap qm;
 
 	static boolean marker = true;
 
@@ -101,7 +105,7 @@ public class MapDrawer extends Frame implements GLEventListener
 				marker = false;
 			}
 		}
-
+		qm = new QuadMap(gfl, new Color(lowR, lowG, lowB), new Color(lowR, lowG, lowB));
 		new MapDrawer();
 	}
 
@@ -126,21 +130,11 @@ public class MapDrawer extends Frame implements GLEventListener
 		DrawArea(gl, stepNum, new Color(lowR, lowG, lowB), new Color(highR, highG, highB));
 	}
 
-	public float GetMin(float f1, float f2)
-	{
-		if(f1 < f2)
-		{
-			return  f1;
-		}
-		else
-		{
-			return f2;
-		}
-	}
+
 	//draws all contour lines
 	public void DrawArea(GL2 gl, int stepNum, Color colorStart, Color colorEnd)
 	{
-		float scaling = GetMin(width / (float)gfl.height.length, height / (float)gfl.height[0].length);
+		float scaling = Utilities.GetMin(width / (float)gfl.height.length, height / (float)gfl.height[0].length);
 		double stepSize = (gfl.maxHeight - gfl.minHeight) / stepNum;
 		double[] startColor = new double[] {(double)colorStart.getRed()/255.0, (double)colorStart.getGreen()/255.0,(double)colorStart.getBlue()/255.0};
 		double[] endColor = new double[] {(double)colorEnd.getRed()/255.0, (double)colorEnd.getGreen()/255.0,(double)colorEnd.getBlue()/255.0};
@@ -153,42 +147,9 @@ public class MapDrawer extends Frame implements GLEventListener
 
 		for(int s = 0; s < stepNum; s++)
 		{
-			DrawLevel((float)gfl.minHeight + s * (float)stepSize, gl, DoubleToColor(Add(startColor, Multiply(s, colorStep))), scaling);
+			DrawLevel((float)gfl.minHeight + s * (float)stepSize, gl, Utilities.DoubleToColor(Utilities.Add(startColor, Utilities.Multiply(s, colorStep))), scaling);
 
 		}
-	}
-
-	public Color DoubleToColor(double[] color)
-	{
-		return new Color((float)color[0], (float)color[1], (float)color[2]);
-	}
-
-	public double[] ColorToDouble(Color color)
-	{
-		return new double[] {(double)color.getRed()/255.0, (double)color.getGreen()/255.0,(double)color.getBlue()/255.0};
-
-	}
-
-	public double[] Add(double[] v1, double[] v2)
-	{
-		double[] toRet = new double[v1.length];
-		for(int x = 0; x < toRet.length; x++)
-		{
-			toRet[x] = v1[x] + v2[x];
-		}
-
-		return  toRet;
-	}
-
-	public double[] Multiply(int scalar, double[] vals)
-	{
-		double[] toRet = new double[vals.length];
-		for(int x = 0; x < vals.length; x++)
-		{
-			toRet[x] = vals[x] * scalar;
-		}
-
-		return  toRet;
 	}
 
 	//draws one level of contour lines
@@ -240,7 +201,7 @@ public class MapDrawer extends Frame implements GLEventListener
 
 	public void DrawStar(float x, float y, Color c, GL2 gl)
 	{
-		gl.glColor3d(ColorToDouble(c)[0], ColorToDouble(c)[1], ColorToDouble(c)[2]);
+		gl.glColor3d(Utilities.ColorToDouble(c)[0], Utilities.ColorToDouble(c)[1], Utilities.ColorToDouble(c)[2]);
 		gl.glBegin(GL2.GL_POLYGON);
 		{//the most disappointing star you've seen in your life.
 			gl.glVertex2f(x, y);
@@ -262,16 +223,7 @@ public class MapDrawer extends Frame implements GLEventListener
 			gl.glVertex2f(x + 15f, y - 20);
 			//\
 			gl.glVertex2f(x + 10, y - 10);
-
-
-
-
-
 		}
 		gl.glEnd();
-
-
 	}
-
-
 }
