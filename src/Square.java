@@ -7,28 +7,33 @@ import java.awt.*;
  */
 public class Square
 {
-	public  float x;
-	public  float y;
+	public  int x;
+	public  int y;
 
 	public  float xScale = 1;
 	public  float yScale = 1;
 
-	public  float[][] heights = new float[2][2];
+	public  double[][] heights = new double[2][2];
 
 	private Coordinate[][] corners = new Coordinate[2][2];
 
-	public  Square(float x, float y, float xScale, float yScale, float[][] heights)
+	public  Square(int x, int y, float xScale, float yScale, float[][] heights, double maxHeight)
 	{
 		this.x = x;
 		this.y = y;
 		this.xScale = xScale;
 		this.yScale = yScale;
-		this.heights = heights;
 
 		corners[0][0] = new Coordinate(x * xScale, y * yScale);
 		corners[0][1] = new Coordinate(x * xScale, (y + 1) * yScale);
 		corners[1][0] = new Coordinate((x + 1) * xScale, y * yScale);
 		corners[1][1] = new Coordinate((x + 1) * xScale, (y + 1) * yScale);
+
+		this.heights[0][0] = heights[x][y] - maxHeight;
+		this.heights[0][1] = heights[x][y + 1] - maxHeight;
+		this.heights[1][1] = heights[x + 1][y + 1] - maxHeight;
+		this.heights[1][0] = heights[x + 1][y] - maxHeight;
+
 	}
 
 	public void DrawContour(float height, GL2 gl, Color color)
