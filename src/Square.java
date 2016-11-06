@@ -127,6 +127,5 @@ public class Square
 		gl.glVertex3d(corners[0][1].x, corners[0][1].y, heights[0][1]);
 		gl.glVertex3d(corners[1][0].x, corners[1][0].y, heights[1][0]);
 		gl.glVertex3d(corners[0][0].x, corners[0][0].y, heights[0][0]);
-
 	}
 }

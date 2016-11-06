@@ -1,25 +1,33 @@
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.glu.GLU;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 /**
  * Created by alvarpq on 10/5/2016.
  */
-public class MapDrawer extends Frame implements GLEventListener
+public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 {
+	private static GLCanvas canvas;
+
 	static
 	{
 		GLProfile.getDefault();
-	}
 
-	private GLCanvas canvas;
+	}
+	private GLU glu = new GLU();
 
 	GLProfile glProfile = null;
 	GLCapabilities glcapabilities = null;
-	GLCanvas glcanvas = null;
+
+	public float angleX = 0;
+
 
 	static gridFloatReader gfl ;
 
@@ -42,16 +50,16 @@ public class MapDrawer extends Frame implements GLEventListener
 		glProfile = GLProfile.getDefault();
 		glcapabilities = new GLCapabilities(glProfile);
 
-		glcanvas = new GLCanvas(glcapabilities);
-		glcanvas.addGLEventListener(this);
+		canvas = new GLCanvas(glcapabilities);
+		canvas.addGLEventListener(this);
 
-		add(glcanvas);
+		add(canvas);
 
 		addWindowListener(new WindowAdapter()
 		{
 			public void windowClosing(WindowEvent windowevent)
 			{
-				remove(glcanvas);
+				remove(canvas);
 				dispose();
 				System.exit(0);
 			}
@@ -59,6 +67,11 @@ public class MapDrawer extends Frame implements GLEventListener
 
 		setSize((int)width, (int)height);
 		setVisible(true);
+
+		canvas.addGLEventListener(this);
+		canvas.addKeyListener(this);
+
+
 	}
 
 
@@ -127,7 +140,15 @@ public class MapDrawer extends Frame implements GLEventListener
 		//Set a color (redish - no other components)
 		gl.glColor3f(0.0f, 1f, 0.0f);
 		//Define a primitive -  A polygon in this case
-		DrawArea(gl, stepNum, new Color(lowR, lowG, lowB), new Color(highR, highG, highB));
+		//DrawArea(gl, stepNum, new Color(lowR, lowG, lowB), new Color(highR, highG, highB));
+		gl.glPushMatrix();
+		{
+			qm.DrawArea(gl);
+			gl.glRotated(angleX,0,0,1);
+			gl.glRotated(angleX, 0, 1, 0);
+			gl.glRotated(angleX, 1, 0, 0);
+		}gl.glPopMatrix();
+
 	}
 
 
@@ -173,22 +194,16 @@ public class MapDrawer extends Frame implements GLEventListener
 	public void reshape( GLAutoDrawable glautodrawable, int x, int y, int width, int height ) {
 		System.out.println("Entering reshape(); x="+x+" y="+y+" width="+width+" height="+height);
 		//Get the context
-		GL2 gl=glautodrawable.getGL().getGL2();
-		//Set up projection
-		gl.glMatrixMode( GL2.GL_PROJECTION );
+		GL2 gl = glautodrawable.getGL().getGL2();
+		if(height <=0)
+			height =1;
+		final float h = (float) width / (float) height;
+		gl.glViewport(3, 6, width, height);
+		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
-		//this glOrtho call sets up a 640x480 unit plane with a parallel projection.
-		gl.glOrtho(0,640,0,480,0,10);
-		//Handle aspect ratio
-		double AR= this.width/this.height;
-
-		if (AR*height<width)
-				gl.glViewport(x, y, (int) (AR*height), height);
-		else
-			gl.glViewport(x, y, width, (int) (width/AR));
-
-		gl.glViewport(x, y, (int) (AR*height), height);
+		glu.gluPerspective(45.0f, h, 1.0, 20.0);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glLoadIdentity();
 		gl.glLoadIdentity();
 	}
 
@@ -225,5 +240,42 @@ public class MapDrawer extends Frame implements GLEventListener
 			gl.glVertex2f(x + 10, y - 10);
 		}
 		gl.glEnd();
+	}
+
+	@Override
+	public void keyPressed(KeyEvent ke) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyTyped(KeyEvent ke) {
+		// TODO Auto-generated method stub
+		System.out.println(ke.getKeyChar());
+		char key=ke.getKeyChar();
+		switch(key)
+		{
+			case 'a':
+			case 'A':
+				angleX+=.1f;
+				System.out.println("uy");
+				break;
+			case 'd':
+			case 'D':
+				angleX-= .1f;
+				System.out.println("uy");
+				break;
+			default:
+				break;
+		}
+
+		//Redisplay
+		canvas.display();
 	}
 }

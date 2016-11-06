@@ -1,5 +1,4 @@
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GLAutoDrawable;
 
 import java.awt.*;
 
@@ -8,23 +7,40 @@ import java.awt.*;
  */
 public class QuadMap
 {
-	Square[][] strips;
+	private Square[][] strips;
 
-	double scaling = 1;
+	private float scaling = 1;
 
 	public QuadMap(gridFloatReader gfl, Color lowColor, Color highColor)
 	{
-		strips = new Square[gfl.nrows][gfl.ncols];
+		strips = new Square[gfl.nrows - 1][gfl.ncols - 1];
+		FillStrips(gfl);
 	}
-	public QuadMap(gridFloatReader gfl, Color lowColor, Color highColor, double scale)
+	public QuadMap(gridFloatReader gfl, Color lowColor, Color highColor, float scale)
 	{
 		this(gfl, lowColor, highColor);
 		scaling = scale;
+		FillStrips(gfl);
+
 	}
 
-	public void SetScale(double scale)
+	private void FillStrips(gridFloatReader gfl)
+	{
+		for (int x = 0; x < gfl.nrows - 1; x++)
+		{
+			for (int y = 0; y < gfl.ncols - 1; y++)
+			{
+
+				strips[x][y] = new Square(x, y, scaling, scaling, gfl.height);
+			}
+		}
+	}
+
+	public void SetScale(float scale, gridFloatReader gfl)
 	{
 		scaling = scale;
+		FillStrips(gfl);
+
 	}
 
 	public void DrawArea(GL2 gl)
@@ -36,13 +52,55 @@ public class QuadMap
 	}
 	private void DrawStrip(GL2 gl, int strip)
 	{
-		gl.glBegin(GL2.GL_QUADS);
+		/*gl.glBegin(GL2.GL_QUADS);
 		{
 			for (int x = 0; x < strips[strip].length; x++)
 			{
 				//x,y,z, y is height.
 				strips[strip][x].QuadInstructions(gl);
 			}
-		}
+		}gl.glEnd();*/
+
+
+
+		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+		gl.glLoadIdentity();                       // Reset The View
+		gl.glTranslatef(0f, 0f, -5.0f);
+		gl.glRotatef(.1f, 1.0f, 1.0f, 1.0f);
+		gl.glRotatef(.1f, 0.0f, 1.0f, 0.0f);
+		gl.glRotatef(.1f, 0.0f, 0.0f, 1.0f);
+		gl.glBegin(GL2.GL_QUADS);
+		// Front Face
+		gl.glVertex3f(-1.0f, -1.0f,  1.0f);
+		gl.glVertex3f( 1.0f, -1.0f,  1.0f);
+		gl.glVertex3f( 1.0f,  1.0f,  1.0f);
+		gl.glVertex3f(-1.0f,  1.0f,  1.0f);
+		// Back Face
+		 gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+		 gl.glVertex3f(-1.0f,  1.0f, -1.0f);
+		 gl.glVertex3f( 1.0f,  1.0f, -1.0f);
+		 gl.glVertex3f( 1.0f, -1.0f, -1.0f);
+
+		 gl.glVertex3f(-1.0f,  1.0f, -1.0f);
+		 gl.glVertex3f(-1.0f,  1.0f,  1.0f);
+		 gl.glVertex3f( 1.0f,  1.0f,  1.0f);
+		 gl.glVertex3f( 1.0f,  1.0f, -1.0f);
+
+		 gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+		 gl.glVertex3f( 1.0f, -1.0f, -1.0f);
+		 gl.glVertex3f( 1.0f, -1.0f,  1.0f);
+		 gl.glVertex3f(-1.0f, -1.0f,  1.0f);
+
+		 gl.glVertex3f( 1.0f, -1.0f, -1.0f);
+		 gl.glVertex3f( 1.0f,  1.0f, -1.0f);
+		 gl.glVertex3f( 1.0f,  1.0f,  1.0f);
+		 gl.glVertex3f( 1.0f, -1.0f,  1.0f);
+
+		 gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+		 gl.glVertex3f(-1.0f, -1.0f,  1.0f);
+		 gl.glVertex3f(-1.0f,  1.0f,  1.0f);
+		 gl.glVertex3f(-1.0f,  1.0f, -1.0f);
+		gl.glEnd();
+		gl.glFlush();
 	}
 }
