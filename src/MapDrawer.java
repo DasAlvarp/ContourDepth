@@ -14,8 +14,7 @@ import java.awt.event.WindowEvent;
  */
 public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 {
-	 private GLCanvas canvas;
-
+	private GLCanvas canvas;
 
 
 	GLU glu = new GLU();
@@ -68,19 +67,21 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 
 	}
 
+/*
 	public static void createAndShowGUI(){
 		GL2ColorCubePerspective s = new GL2ColorCubePerspective();
 		s.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		s.pack();
 		s.setVisible(true);
 	}
+*/
 
 	public static void main(String[] args)
 	{
 
 		gfl = new gridFloatReader(args[0]);
 
-		if (args[1].equals("auto"))
+		if(args[1].equals("auto"))
 		{
 			low = gfl.minHeight;
 			high = gfl.maxHeight;
@@ -94,12 +95,11 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 			highB = Integer.parseInt(args[6]);
 			highG = Integer.parseInt(args[7]);
 
-			if (args[8].equals("marker=false"))
+			if(args[8].equals("marker=false"))
 			{
 				marker = false;
 			}
-		}
-		else
+		} else
 		{
 			low = Double.parseDouble(args[1]);
 			high = Double.parseDouble(args[2]);
@@ -113,7 +113,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 			highB = Integer.parseInt(args[8]);
 			highG = Integer.parseInt(args[9]);
 
-			if (args[10].equals("marker=false"))
+			if(args[10].equals("marker=false"))
 			{
 				marker = false;
 			}
@@ -173,12 +173,12 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		double[] endColor = new double[]{(double) colorEnd.getRed() / 255.0, (double) colorEnd.getGreen() / 255.0, (double) colorEnd.getBlue() / 255.0};
 
 		double[] colorStep = new double[3];
-		for (int x = 0; x < 3; x++)
+		for(int x = 0; x < 3; x++)
 		{
 			colorStep[x] = (endColor[x] - startColor[x]) / stepNum;
 		}
 
-		for (int s = 0; s < stepNum; s++)
+		for(int s = 0; s < stepNum; s++)
 		{
 			DrawLevel((float) gfl.minHeight + s * (float) stepSize, gl, Utilities.DoubleToColor(Utilities.Add(startColor, Utilities.Multiply(s, colorStep))), scaling);
 
@@ -188,16 +188,16 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	//draws one level of contour lines
 	public void DrawLevel(float level, GL2 gl, Color color, float scaling)
 	{
-		for (int x = 0; x < gfl.height.length - 1; x++)
+		for(int x = 0; x < gfl.height.length - 1; x++)
 		{
-			for (int y = 0; y < gfl.height[x].length - 1; y++)
+			for(int y = 0; y < gfl.height[x].length - 1; y++)
 			{
 				Square sq = new Square(x, y, scaling, scaling, gfl);
 				sq.DrawContour(level, gl, color);
 
 			}
 		}
-		if (marker)
+		if(marker)
 		{
 			DrawStar(scaling * (float) gfl.maxHeightxi, scaling * (float) gfl.maxHeightyi, Color.YELLOW, gl);
 		}
@@ -210,7 +210,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		System.out.println("Entering reshape(); x=" + x + " y=" + y + " width=" + width + " height=" + height);
 		//Get the context
 		GL2 gl = glautodrawable.getGL().getGL2();
-		if (height <= 0)
+		if(height <= 0)
 		{
 			height = 1;
 		}
@@ -270,19 +270,19 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 
 	}
 
-	double fov=45;
-	double aspectRatio=1;
-	double zNear=0.1;
-	double zFar=100;
-	double[] eyePos={1,1,3};
+	double fov = 45;
+	double aspectRatio = 1;
+	double zNear = 0.1;
+	double zFar = 100;
+	double[] eyePos = {1, 1, 3};
 
-	double[] targetPos={0,0,0};
-	double[] upVector={0,0,1};
-	double dIncrement=.2;
-	double aIncrement=0.1;
-	double eyeDist=Math.sqrt(eyePos[0]*eyePos[0]+eyePos[1]*eyePos[1]+eyePos[2]*eyePos[2]);
-	double phi=0;
-	double theta=90.0/180.0*Math.PI;
+	double[] targetPos = {0, 0, 0};
+	double[] upVector = {0, 0, 1};
+	double dIncrement = .2;
+	double aIncrement = 0.1;
+	double eyeDist = Math.sqrt(eyePos[0] * eyePos[0] + eyePos[1] * eyePos[1] + eyePos[2] * eyePos[2]);
+	double phi = 0;
+	double theta = 90.0 / 180.0 * Math.PI;
 
 	@Override
 	public void keyTyped(KeyEvent ke)
@@ -290,8 +290,8 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		// TODO Auto-generated method stub
 		System.out.println(ke.getKeyChar());
 		char key = ke.getKeyChar();
-		boolean updateSpherical=false, updateCartesian=false;
-		switch (key)
+		boolean updateSpherical = false, updateCartesian = false;
+		switch(key)
 		{
 			case 'x':
 			case 'X':
@@ -325,17 +325,17 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 				break;
 		}
 
-		if (updateSpherical)
+		if(updateSpherical)
 		{
-			eyeDist=Math.sqrt(eyePos[0]*eyePos[0]+eyePos[1]*eyePos[1]+eyePos[2]*eyePos[2]);
-			theta=Math.atan2(eyePos[1], eyePos[0]);
-			phi=Math.acos(eyePos[2]/eyeDist);
+			eyeDist = Math.sqrt(eyePos[0] * eyePos[0] + eyePos[1] * eyePos[1] + eyePos[2] * eyePos[2]);
+			theta = Math.atan2(eyePos[1], eyePos[0]);
+			phi = Math.acos(eyePos[2] / eyeDist);
 		}
-		if (updateCartesian)
+		if(updateCartesian)
 		{
-			eyePos[0]=eyeDist*Math.cos(theta)*Math.sin(phi);
-			eyePos[1]=eyeDist*Math.sin(theta)*Math.sin(phi);
-			eyePos[2]=-eyeDist*Math.cos(phi);
+			eyePos[0] = eyeDist * Math.cos(theta) * Math.sin(phi);
+			eyePos[1] = eyeDist * Math.sin(theta) * Math.sin(phi);
+			eyePos[2] = -eyeDist * Math.cos(phi);
 		}
 		//Redisplay
 		canvas.display();

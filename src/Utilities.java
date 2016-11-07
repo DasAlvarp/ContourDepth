@@ -7,12 +7,12 @@ public class Utilities
 {
 	public static Color DoubleToColor(double[] color)
 	{
-		return new Color((float)color[0], (float)color[1], (float)color[2]);
+		return new Color((float) color[0], (float) color[1], (float) color[2]);
 	}
 
 	public static double[] ColorToDouble(Color color)
 	{
-		return new double[] {(double)color.getRed()/255.0, (double)color.getGreen()/255.0,(double)color.getBlue()/255.0};
+		return new double[]{(double) color.getRed() / 255.0, (double) color.getGreen() / 255.0, (double) color.getBlue() / 255.0};
 
 	}
 
@@ -24,13 +24,13 @@ public class Utilities
 			toRet[x] = v1[x] + v2[x];
 		}
 
-		return  toRet;
+		return toRet;
 	}
 
 	public static double[] Subtract(double[] v1, double[] v2)
 	{
 		double[] toRet = new double[v1.length];
-		for (int x = 0; x < toRet.length; x++)
+		for(int x = 0; x < toRet.length; x++)
 		{
 			toRet[x] = v1[x] - v2[x];
 		}
@@ -52,9 +52,8 @@ public class Utilities
 	{
 		if(f1 < f2)
 		{
-			return  f1;
-		}
-		else
+			return f1;
+		} else
 		{
 			return f2;
 		}

@@ -15,6 +15,6 @@ public class Coordinate
 
 	public Coordinate GetBetween(Coordinate other)
 	{
-		return new Coordinate((x + other.x) /2, (y + other.y) / 2);
+		return new Coordinate((x + other.x) / 2, (y + other.y) / 2);
 	}
 }

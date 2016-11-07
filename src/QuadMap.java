@@ -25,11 +25,21 @@ public class QuadMap
 
 	}
 
+	public void DrawContours(int num)
+	{
+
+	}
+
+	private void DrawContour(double level)
+	{
+
+	}
+
 	private void FillStrips(gridFloatReader gfl)
 	{
-		for (int x = 0; x < gfl.nrows - 1; x++)
+		for(int x = 0; x < gfl.nrows - 1; x++)
 		{
-			for (int y = 0; y < gfl.ncols - 1; y++)
+			for(int y = 0; y < gfl.ncols - 1; y++)
 			{
 
 				strips[x][y] = new Square(x, y, scaling, scaling, gfl);
@@ -47,7 +57,7 @@ public class QuadMap
 	public void DrawArea(GL2 gl)
 	{
 
-		for (int x = 0; x < strips.length; x++)
+		for(int x = 0; x < strips.length; x++)
 		{
 			DrawStrip(gl, x);
 		}
@@ -58,13 +68,20 @@ public class QuadMap
 	{
 		gl.glBegin(GL2.GL_QUAD_STRIP);
 
-		for (int x = 0; x < strips[strip].length; x++)
+		for(int x = 0; x < strips[strip].length; x++)
 		{
 
 			//x,y,z, y is height.
-			strips[strip][x].QuadInstructions(gl, Color.BLACK, Color.white);
+			strips[strip][x].QuadInstructions(gl, Color.RED, Color.GREEN);
 		}
 		gl.glEnd();
+
+		for(int x = 0; x < strips[strip].length; x++)
+		{
+
+			//x,y,z, y is height.
+			strips[strip][x].DrawContour(0.0, gl, Color.black);
+		}
 
 
 
