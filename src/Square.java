@@ -17,22 +17,23 @@ public class Square
 
 	private Coordinate[][] corners = new Coordinate[2][2];
 
-	public  Square(int x, int y, float xScale, float yScale, float[][] heights, double maxHeight)
+	public  Square(int x, int y, float xScale, float yScale, gridFloatReader gfl)
 	{
 		this.x = x;
 		this.y = y;
-		this.xScale = xScale;
-		this.yScale = yScale;
+		this.xScale = 2 / gfl.height.length;
+		this.yScale = 2 / gfl.height[0].length;
 
-		corners[0][0] = new Coordinate(x * xScale, y * yScale);
-		corners[0][1] = new Coordinate(x * xScale, (y + 1) * yScale);
-		corners[1][0] = new Coordinate((x + 1) * xScale, y * yScale);
-		corners[1][1] = new Coordinate((x + 1) * xScale, (y + 1) * yScale);
+		corners[0][0] = new Coordinate(x * this.xScale - 1, y * this.yScale - 1);
+		corners[0][1] = new Coordinate(x * this.xScale - 1, (y + 1) * this.yScale - 1);
+		corners[1][0] = new Coordinate((x + 1) * this.xScale - 1, y * this.yScale - 1);
+		corners[1][1] = new Coordinate((x + 1) * this.xScale - 1, (y + 1) * this.yScale - 1);
 
-		this.heights[0][0] = heights[x][y] - maxHeight;
-		this.heights[0][1] = heights[x][y + 1] - maxHeight;
-		this.heights[1][1] = heights[x + 1][y + 1] - maxHeight;
-		this.heights[1][0] = heights[x + 1][y] - maxHeight;
+		double heightScaling = 2/(gfl.maxHeight-gfl.minHeight);
+		this.heights[0][0] = (gfl.height[x][y] - gfl.maxHeight) * heightScaling -1;
+		this.heights[0][1] = (gfl.height[x][y + 1] - gfl.maxHeight) * heightScaling - 1;
+		this.heights[1][1] = (gfl.height[x + 1][y + 1] - gfl.maxHeight) * heightScaling - 1;
+		this.heights[1][0] = (gfl.height[x + 1][y] - gfl.maxHeight) * heightScaling - 1;
 
 	}
 

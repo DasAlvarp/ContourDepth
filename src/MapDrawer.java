@@ -193,7 +193,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		{
 			for (int y = 0; y < gfl.height[x].length - 1; y++)
 			{
-				Square sq = new Square(x, y, scaling, scaling, new float[][]{{gfl.height[x][y], gfl.height[x][y + 1]}, {gfl.height[x + 1][y], gfl.height[x + 1][y + 1]}},gfl.maxHeight);
+				Square sq = new Square(x, y, scaling, scaling, gfl);
 				sq.DrawContour(level, gl, color);
 
 			}

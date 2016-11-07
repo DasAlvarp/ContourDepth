@@ -32,7 +32,7 @@ public class QuadMap
 			for (int y = 0; y < gfl.ncols - 1; y++)
 			{
 
-				strips[x][y] = new Square(x, y, scaling, scaling, gfl.height, gfl.maxHeight);
+				strips[x][y] = new Square(x, y, scaling, scaling, gfl);
 			}
 		}
 	}
