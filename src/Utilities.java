@@ -27,15 +27,25 @@ public class Utilities
 		return  toRet;
 	}
 
-	public static double[] Multiply(int scalar, double[] vals)
+	public static double[] Subtract(double[] v1, double[] v2)
+	{
+		double[] toRet = new double[v1.length];
+		for (int x = 0; x < toRet.length; x++)
+		{
+			toRet[x] = v1[x] - v2[x];
+		}
+
+		return toRet;
+	}
+
+	public static double[] Multiply(double scalar, double[] vals)
 	{
 		double[] toRet = new double[vals.length];
 		for(int x = 0; x < vals.length; x++)
 		{
 			toRet[x] = vals[x] * scalar;
 		}
-
-		return  toRet;
+		return toRet;
 	}
 
 	public static float GetMin(float f1, float f2)

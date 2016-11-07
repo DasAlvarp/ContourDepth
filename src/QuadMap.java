@@ -56,13 +56,13 @@ public class QuadMap
 
 	private void DrawStrip(GL2 gl, int strip)
 	{
-		gl.glBegin(GL2.GL_QUADS);
+		gl.glBegin(GL2.GL_QUAD_STRIP);
 
 		for (int x = 0; x < strips[strip].length; x++)
 		{
 
 			//x,y,z, y is height.
-			strips[strip][x].QuadInstructions(gl);
+			strips[strip][x].QuadInstructions(gl, Color.BLACK, Color.white);
 		}
 		gl.glEnd();
 

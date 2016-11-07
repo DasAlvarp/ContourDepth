@@ -153,8 +153,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		//DrawArea(gl, stepNum, new Color(lowR, lowG, lowB), new Color(highR, highG, highB));
 		gl.glPushMatrix();
 		{
-			gl.glTranslated(0, 0, -3.0);
-			gl.glRotated(90, 0, 0, 1);
+			gl.glRotated(90, 0, 0, -1);
 			gl.glRotated(45, 0, 1, 0);
 			gl.glRotated(45, 1, 0, 0);
 			qm.DrawArea(gl);
@@ -275,7 +274,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	double aspectRatio=1;
 	double zNear=0.1;
 	double zFar=100;
-	double[] eyePos={3,3,3};
+	double[] eyePos={1,1,3};
 
 	double[] targetPos={0,0,0};
 	double[] upVector={0,0,1};
@@ -336,7 +335,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		{
 			eyePos[0]=eyeDist*Math.cos(theta)*Math.sin(phi);
 			eyePos[1]=eyeDist*Math.sin(theta)*Math.sin(phi);
-			eyePos[2]=eyeDist*Math.cos(phi);
+			eyePos[2]=-eyeDist*Math.cos(phi);
 		}
 		//Redisplay
 		canvas.display();

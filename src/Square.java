@@ -28,7 +28,6 @@ public class Square
 		corners[0][1] = new Coordinate((double) x * this.xScale - 1, (double) (y + 1) * this.yScale - 1);
 		corners[1][0] = new Coordinate((double) (x + 1) * this.xScale - 1, (double) y * this.yScale - 1);
 		corners[1][1] = new Coordinate((double) (x + 1) * this.xScale - 1, (double) (y + 1) * this.yScale - 1);
-		System.out.println(this.corners[0][0].x + ", " + this.corners[0][0].y + ", " + this.xScale);
 
 		double heightScaling = 2/(gfl.maxHeight-gfl.minHeight);
 		this.heights[0][0] = (gfl.height[x][y] - gfl.avgHeight) * heightScaling;
@@ -128,7 +127,7 @@ public class Square
 	}
 
 
-	public void QuadInstructions(GL2 gl)
+	public void QuadInstructions(GL2 gl, Color cmin, Color cmax)
 	{
 		/*for(int x = 0; x < 2; x++)
 		{
@@ -137,9 +136,24 @@ public class Square
 				System.out.println("Loc: " + corners[x][y].x + ", " + corners[x][y].y + " \nHeight: " + heights[x][y]);
 			}
 		}*/
+		double[] colorDif = Utilities.Subtract(Utilities.ColorToDouble(cmax), Utilities.ColorToDouble(cmin));
+		double[] color = Utilities.ColorToDouble(cmin);
+		color = Utilities.Add(color, Utilities.Multiply((heights[1][1] + 1.0)/ 2.0, colorDif));
+		System.out.println(color[0] + ", " + color[1] + ", " + color[2]);
+
+		gl.glColor3d(color[0], color[1], color[2]);
 		gl.glVertex3d(corners[1][1].x, corners[1][1].y, heights[1][1]);
+
+		color = Utilities.Add(color, Utilities.Multiply((heights[0][1] + 1.0 )/ 2.0, colorDif));
+		gl.glColor3d(color[0], color[1], color[2]);
 		gl.glVertex3d(corners[0][1].x, corners[0][1].y, heights[0][1]);
+
+		color = Utilities.Add(color, Utilities.Multiply((heights[1][0] + 1.0 )/ 2.0, colorDif));
+		gl.glColor3d(color[0], color[1], color[2]);
 		gl.glVertex3d(corners[1][0].x, corners[1][0].y, heights[1][0]);
+
+		color = Utilities.Add(color, Utilities.Multiply((heights[0][0] + 1.0 )/ 2.0, colorDif));
+		gl.glColor3d(color[0], color[1], color[2]);
 		gl.glVertex3d(corners[0][0].x, corners[0][0].y, heights[0][0]);
 	}
 }
