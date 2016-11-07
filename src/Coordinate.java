@@ -3,11 +3,11 @@
  */
 public class Coordinate
 {
-	public float x;
-	public float y;
+	public double x;
+	public double y;
 
 
-	public Coordinate(float x, float y)
+	public Coordinate(double x, double y)
 	{
 		this.x = x;
 		this.y = y;

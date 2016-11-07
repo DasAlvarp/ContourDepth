@@ -69,7 +69,7 @@ public class QuadMap
 
 
 
-		gl.glBegin(GL2.GL_QUADS);
+		/*gl.glBegin(GL2.GL_QUADS);
 		{
 			// Front Face
 			gl.glVertex3f(-1.0f, -1.0f, 1.0f);
@@ -102,6 +102,6 @@ public class QuadMap
 			gl.glVertex3f(-1.0f, 1.0f, 1.0f);
 			gl.glVertex3f(-1.0f, 1.0f, -1.0f);
 		}
-		gl.glEnd();
+		gl.glEnd();*/
 	}
 }

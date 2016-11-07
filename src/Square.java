@@ -10,8 +10,8 @@ public class Square
 	public  int x;
 	public  int y;
 
-	public  float xScale = 1;
-	public  float yScale = 1;
+	public  double xScale = 1;
+	public  double yScale = 1;
 
 	public  double[][] heights = new double[2][2];
 
@@ -21,19 +21,20 @@ public class Square
 	{
 		this.x = x;
 		this.y = y;
-		this.xScale = 2 / gfl.height.length;
-		this.yScale = 2 / gfl.height[0].length;
+		this.xScale = 2.0 / (double)gfl.height.length;
+		this.yScale = 2.0 / (double)gfl.height[0].length;
 
-		corners[0][0] = new Coordinate(x * this.xScale - 1, y * this.yScale - 1);
-		corners[0][1] = new Coordinate(x * this.xScale - 1, (y + 1) * this.yScale - 1);
-		corners[1][0] = new Coordinate((x + 1) * this.xScale - 1, y * this.yScale - 1);
-		corners[1][1] = new Coordinate((x + 1) * this.xScale - 1, (y + 1) * this.yScale - 1);
+		corners[0][0] = new Coordinate(((double) x) * this.xScale - 1, (double) y * this.yScale - 1);
+		corners[0][1] = new Coordinate((double) x * this.xScale - 1, (double) (y + 1) * this.yScale - 1);
+		corners[1][0] = new Coordinate((double) (x + 1) * this.xScale - 1, (double) y * this.yScale - 1);
+		corners[1][1] = new Coordinate((double) (x + 1) * this.xScale - 1, (double) (y + 1) * this.yScale - 1);
+		System.out.println(this.corners[0][0].x + ", " + this.corners[0][0].y + ", " + this.xScale);
 
 		double heightScaling = 2/(gfl.maxHeight-gfl.minHeight);
-		this.heights[0][0] = (gfl.height[x][y] - gfl.maxHeight) * heightScaling -1;
-		this.heights[0][1] = (gfl.height[x][y + 1] - gfl.maxHeight) * heightScaling - 1;
-		this.heights[1][1] = (gfl.height[x + 1][y + 1] - gfl.maxHeight) * heightScaling - 1;
-		this.heights[1][0] = (gfl.height[x + 1][y] - gfl.maxHeight) * heightScaling - 1;
+		this.heights[0][0] = (gfl.height[x][y] - gfl.avgHeight) * heightScaling;
+		this.heights[0][1] = (gfl.height[x][y + 1] - gfl.avgHeight) * heightScaling;
+		this.heights[1][1] = (gfl.height[x + 1][y + 1] - gfl.avgHeight) * heightScaling ;
+		this.heights[1][0] = (gfl.height[x + 1][y] - gfl.avgHeight) * heightScaling;
 
 	}
 
@@ -102,7 +103,7 @@ public class Square
 				{
 					if (sideTrue[x])
 					{
-						gl.glVertex2f(sideCoords[x].x, sideCoords[x].y);
+						gl.glVertex2d(sideCoords[x].x, sideCoords[x].y);
 					}
 				}
 			}
@@ -112,14 +113,14 @@ public class Square
 		{
 			gl.glBegin(GL2.GL_LINES);
 			{
-				gl.glVertex2f(sideCoords[1].x, sideCoords[1].y);
-				gl.glVertex2f(sideCoords[0].x, sideCoords[0].y);
+				gl.glVertex2d(sideCoords[1].x, sideCoords[1].y);
+				gl.glVertex2d(sideCoords[0].x, sideCoords[0].y);
 			}
 			gl.glEnd();
 			gl.glBegin(GL2.GL_LINES);
 			{
-				gl.glVertex2f(sideCoords[2].x, sideCoords[2].y);
-				gl.glVertex2f(sideCoords[3].x, sideCoords[3].y);
+				gl.glVertex2d(sideCoords[2].x, sideCoords[2].y);
+				gl.glVertex2d(sideCoords[3].x, sideCoords[3].y);
 			}
 			gl.glEnd();
 		}
@@ -129,6 +130,13 @@ public class Square
 
 	public void QuadInstructions(GL2 gl)
 	{
+		/*for(int x = 0; x < 2; x++)
+		{
+			for(int y = 0; y < 2; y++)
+			{
+				System.out.println("Loc: " + corners[x][y].x + ", " + corners[x][y].y + " \nHeight: " + heights[x][y]);
+			}
+		}*/
 		gl.glVertex3d(corners[1][1].x, corners[1][1].y, heights[1][1]);
 		gl.glVertex3d(corners[0][1].x, corners[0][1].y, heights[0][1]);
 		gl.glVertex3d(corners[1][0].x, corners[1][0].y, heights[1][0]);
