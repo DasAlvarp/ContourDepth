@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
+ * Main class
  * Created by alvarpq on 10/5/2016.
  */
 public class MapDrawer extends JFrame implements GLEventListener, KeyListener
@@ -111,7 +112,6 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		menuParts.add(hiBl);
 		menuParts.add(lab1);
 
-
 		menuParts.add(inputString);
 		menuParts.add(go);
 		menuParts.add(rStart);
@@ -154,32 +154,27 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	@Override
 	public void display(GLAutoDrawable glAutoDrawable)
 	{
-		System.out.println("Entering display");
 		//Get context
 		GL2 gl = glAutoDrawable.getGL().getGL2();
 
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		//Set-up the camera
-		glu.gluLookAt(eyePos[0], eyePos[2], eyePos[1], targetPos[0], targetPos[2], targetPos[1], upVector[0], upVector[1], upVector[2]);
+		glu.gluLookAt(eyePos[0], eyePos[2], eyePos[1], targetPos[0], targetPos[1], targetPos[2], upVector[0], upVector[1], upVector[2]);
 		//glu.gluLookAt(3, 0, 0, 0, 0, 0, 0, 1, 0);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-
-		//Set a color (redish - no other components)
-		gl.glColor3f(0.0f, 1f, 0.0f);
-		//Define a primitive -  A polygon in this case
-		//DrawArea(gl, stepNum, new Color(lowR, lowG, lowB), new Color(highR, highG, highB));
 		gl.glPushMatrix();
 		{
-			gl.glRotated(45, 0, 0, -1);
+			gl.glTranslatef(0,0,-0.5f);
+			/*gl.glRotated(45, 0, 0, 2);
 			gl.glRotated(-20, 0, 1, 0);
-			gl.glRotated(-20, 1, 0, 0);
+			gl.glRotated(-20, 1, 0, 0);*/
 			qm.DrawArea(gl);
 
 		}
 		gl.glPopMatrix();
-
 	}
+
 
 	@Override
 	public void reshape(GLAutoDrawable glautodrawable, int x, int y, int width, int height)
@@ -218,41 +213,42 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 
 	}
 
+
+	//from rotated color cube
 	@Override
 	public void keyTyped(KeyEvent ke)
 	{
 		// TODO Auto-generated method stub
-		System.out.println(ke.getKeyChar());
 		char key = ke.getKeyChar();
 		boolean updateSpherical = false, updateCartesian = false;
 		switch (key)
 		{
-			case 'x':
-			case 'X':
+			case 'A'://away, rightish
+			case 'a':
 				eyePos[0] -= dIncrement;
 				updateSpherical = true;
 				break;
 			case 'y':
-			case 'Y':
-				eyePos[1] -= dIncrement;
-				updateSpherical = true;
-				break;
-			case 'z':
-			case 'Z':
+			case 'Y'://down
 				eyePos[2] -= dIncrement;
 				updateSpherical = true;
 				break;
+			case 'z':
+			case 'Z'://in, leftish
+				eyePos[1] -= dIncrement;
+				updateSpherical = true;
+				break;
 			case 'r':
-			case 'R':
+			case 'R'://just kind of makes it...disappear
 				eyeDist -= dIncrement;
 				updateCartesian = true;
 				break;
-			case 't':
-			case 'T':
+			case 'd'://x,t are horizontal opposites
+			case 'D'://see r//p-z are vertical opposites
 				theta -= aIncrement;
 				updateCartesian = true;
 				break;
-			case 'p':
+			case 'p'://down after a spooky flip
 			case 'P':
 				phi -= aIncrement;
 				updateCartesian = true;
@@ -262,14 +258,14 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		if (updateSpherical)
 		{
 			eyeDist = Math.sqrt(eyePos[0] * eyePos[0] + eyePos[1] * eyePos[1] + eyePos[2] * eyePos[2]);
-			theta = Math.atan2(eyePos[2], eyePos[0]);
-			phi = Math.acos(eyePos[1] / eyeDist);
+			theta = Math.atan2(eyePos[1], eyePos[0]);
+			phi = Math.acos(eyePos[2] / eyeDist);
 		}
 		if (updateCartesian)
 		{
 			eyePos[0] = eyeDist * Math.cos(theta) * Math.sin(phi);
-			eyePos[2] = eyeDist * Math.sin(theta) * Math.sin(phi);
-			eyePos[1] = eyeDist * Math.cos(phi);
+			eyePos[1] = eyeDist * Math.sin(theta) * Math.sin(phi);
+			eyePos[2] = eyeDist * Math.cos(phi);
 		}
 		//Redisplay
 		canvas.display();
