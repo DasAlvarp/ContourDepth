@@ -12,7 +12,7 @@ public class Square
 	public int y;
 	public double xScale = 1;
 	public double yScale = 1;
-	double ogh;
+
 	private Coordinate[][] corners = new Coordinate[2][2];
 
 	public Square(int x, int y, float xScale, float yScale, gridFloatReader gfl)
@@ -37,14 +37,10 @@ public class Square
 		this.heights[0][1] = ((gfl.height[x][y + 1] - gfl.minHeight) / hDif);
 		this.heights[1][1] = ((gfl.height[x + 1][y + 1] - gfl.minHeight) / hDif);
 		this.heights[1][0] = ((gfl.height[x + 1][y] - gfl.minHeight) / hDif);
-		ogh = heights[0][0];
-
 	}
 
 	public void DrawContour(double height, GL2 gl, Color color)
 	{
-
-
 		int numTrue = 0;
 
 		boolean[][] overUnder = new boolean[2][2];
