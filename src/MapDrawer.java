@@ -23,14 +23,14 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	static JPanel menuParts;
 	static JButton go = new JButton("Generate new maps");
 	static JTextField inputString = new JTextField();
-	static JSlider rStart = new JSlider(JSlider.VERTICAL, 0, 255, 0);
-	static JSlider gStart = new JSlider(JSlider.VERTICAL, 0, 255, 0);
-	static JSlider bStart = new JSlider(JSlider.VERTICAL, 0, 255, 0);
-	static JSlider rStop = new JSlider(JSlider.VERTICAL, 0, 255, 255);
+	static JSlider rStart = new JSlider(JSlider.HORIZONTAL, 0, 255, 0);
+	static JSlider gStart = new JSlider(JSlider.HORIZONTAL, 0, 255, 0);
+	static JSlider bStart = new JSlider(JSlider.HORIZONTAL, 0, 255, 0);
+	static JSlider rStop = new JSlider(JSlider.HORIZONTAL, 0, 255, 255);
 
-	static JSlider gStop = new JSlider(JSlider.VERTICAL, 0, 255, 255);
-	static JSlider bStop = new JSlider(JSlider.VERTICAL, 0, 255, 255);
-	static JSlider itNum = new JSlider(JSlider.VERTICAL, 0, 100, 10);
+	static JSlider gStop = new JSlider(JSlider.HORIZONTAL, 0, 255, 255);
+	static JSlider bStop = new JSlider(JSlider.HORIZONTAL, 0, 255, 255);
+	static JSlider itNum = new JSlider(JSlider.HORIZONTAL, 0, 100, 10);
 	static JLabel loadLabel = new JLabel("File to Load");
 	static JLabel lowRl = new JLabel("Low Red");
 	static JLabel lowGl = new JLabel("Low Green");
@@ -136,7 +136,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		highG = bStart.getValue();
 
 
-		qm = new QuadMap(gfl, false, new Color(lowR, lowG, lowB), new Color(lowR, lowG, lowB), stepNum);
+		qm = new QuadMap(gfl, false, Color.black, Color.white, stepNum);
 		mp = new MapDrawer(qm);
 	}
 

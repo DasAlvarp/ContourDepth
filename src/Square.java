@@ -135,7 +135,7 @@ public class Square
 
 		double[] colorDif = Utilities.Subtract(Utilities.ColorToDouble(cmax), Utilities.ColorToDouble(cmin));
 		double[] color = Utilities.ColorToDouble(cmin);
-		color = Utilities.Add(color, Utilities.Multiply((this.heights[1][1] + 1.0) / 2.0, colorDif));
+		color = Utilities.Add(color, Utilities.Multiply((this.heights[1][1]), colorDif));
 
 		gl.glColor3d(color[0], color[1], color[2]);
 		gl.glVertex3d(corners[1][1].x, corners[1][1].y, this.heights[1][1]);
