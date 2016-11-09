@@ -1,4 +1,7 @@
-import com.jogamp.opengl.*;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
 
@@ -11,36 +14,23 @@ import java.awt.event.*;
  */
 public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 {
-	private GLCanvas canvas;
-
-	GLU glu = new GLU();
-
-	static gridFloatReader gfl = new gridFloatReader("ned_86879038");;
-
-
-	float height = 1200;
-	float width = 1200;
-
 	static public double low, high;
 	static public int stepNum, lowR, lowG, lowB, highR, highG, highB;
-
 	public static QuadMap qm;
-
+	;
+	static gridFloatReader gfl = new gridFloatReader("ned_86879038");
 	//jpanel section
 	static JPanel menuParts;
 	static JButton go = new JButton("Generate new maps");
-	static JTextField inputString = new JTextField();;
-
+	static JTextField inputString = new JTextField();
 	static JSlider rStart = new JSlider(JSlider.VERTICAL, 0, 255, 0);
 	static JSlider gStart = new JSlider(JSlider.VERTICAL, 0, 255, 0);
 	static JSlider bStart = new JSlider(JSlider.VERTICAL, 0, 255, 0);
-
 	static JSlider rStop = new JSlider(JSlider.VERTICAL, 0, 255, 255);
+
 	static JSlider gStop = new JSlider(JSlider.VERTICAL, 0, 255, 255);
 	static JSlider bStop = new JSlider(JSlider.VERTICAL, 0, 255, 255);
-
 	static JSlider itNum = new JSlider(JSlider.VERTICAL, 0, 100, 10);
-
 	static JLabel loadLabel = new JLabel("File to Load");
 	static JLabel lowRl = new JLabel("Low Red");
 	static JLabel lowGl = new JLabel("Low Green");
@@ -49,57 +39,37 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	static JLabel hiGl = new JLabel("High Green");
 	static JLabel hiBl = new JLabel("High Blue");
 	static JLabel lab1 = new JLabel("Number of Steps");
-
 	static JCheckBox wireframe = new JCheckBox("Wireframe");
-
-static MapDrawer mp;
-	public static void main(String[] args)
+	static MapDrawer mp;
+	GLU glu = new GLU();
+	float height = 1200;
+	float width = 1200;
+	double fov = 45;
+	double aspectRatio = 1;
+	double zNear = 0.1;
+	double zFar = 100;
+	double[] eyePos = {1, 1, 3};
+	double[] targetPos = {0, 0, 0};
+	double[] upVector = {0, 0, 1};
+	double dIncrement = .2;
+	double aIncrement = 0.1;
+	double eyeDist = Math.sqrt(eyePos[0] * eyePos[0] + eyePos[1] * eyePos[1] + eyePos[2] * eyePos[2]);
+	double phi = 0;
+	double theta = 90.0 / 180.0 * Math.PI;
+	private GLCanvas canvas;
+	ActionListener redOp = new ActionListener()
 	{
-		menuParts = new JPanel(new GridLayout(2,8));
-		menuParts.add(loadLabel);
-		menuParts.add(wireframe);
-		menuParts.add(lowRl);
-		menuParts.add(lowGl);
-		menuParts.add(lowBl);
-		menuParts.add(hiRl);
-		menuParts.add(hiGl);
-		menuParts.add(hiBl);
-		menuParts.add(lab1);
+		@Override
+		public void actionPerformed(ActionEvent arg0)
+		{
+			JButton b = (JButton) arg0.getSource();
 
 
-
-		menuParts.add(inputString);
-		menuParts.add(go);
-		menuParts.add(rStart);
-		menuParts.add(gStart);
-		menuParts.add(bStart);
-		menuParts.add(rStop);
-		menuParts.add(gStop);
-		menuParts.add(bStop);
-		menuParts.add(itNum);
-
-
-
-		low = gfl.minHeight;
-		high = gfl.maxHeight;
-		stepNum = itNum.getValue();
-
-		lowR = rStart.getValue();
-		lowG = gStart.getValue();
-		lowB = bStart.getValue();
-
-		highR = rStart.getValue();
-		highB = gStart.getValue();
-		highG = bStart.getValue();
-
-
-
-
-
-		qm = new QuadMap(gfl, false, new Color(lowR, lowG, lowB), new Color(lowR, lowG, lowB), stepNum);
-		mp = new MapDrawer(qm);
-	}
-
+			qm = new QuadMap(new gridFloatReader(inputString.getText()), wireframe.isSelected(), new Color(rStart.getValue(), gStart.getValue(), bStart.getValue()), new Color(rStop.getValue(), gStop.getValue(), bStop.getValue()), itNum.getValue() + 1);
+			canvas.display();
+			//mp = new MapDrawer(qm);
+		}
+	};
 
 	public MapDrawer(QuadMap qm)
 	{
@@ -112,7 +82,7 @@ static MapDrawer mp;
 		canvas.addGLEventListener(this);
 
 		getContentPane().add(canvas);
-		menuParts.setPreferredSize(new Dimension((int)width, 80));
+		menuParts.setPreferredSize(new Dimension((int) width, 80));
 		getContentPane().add(menuParts, BorderLayout.NORTH);
 
 		addWindowListener(new WindowAdapter()
@@ -134,6 +104,47 @@ static MapDrawer mp;
 
 	}
 
+	public static void main(String[] args)
+	{
+		menuParts = new JPanel(new GridLayout(2, 8));
+		menuParts.add(loadLabel);
+		menuParts.add(wireframe);
+		menuParts.add(lowRl);
+		menuParts.add(lowGl);
+		menuParts.add(lowBl);
+		menuParts.add(hiRl);
+		menuParts.add(hiGl);
+		menuParts.add(hiBl);
+		menuParts.add(lab1);
+
+
+		menuParts.add(inputString);
+		menuParts.add(go);
+		menuParts.add(rStart);
+		menuParts.add(gStart);
+		menuParts.add(bStart);
+		menuParts.add(rStop);
+		menuParts.add(gStop);
+		menuParts.add(bStop);
+		menuParts.add(itNum);
+
+
+		low = gfl.minHeight;
+		high = gfl.maxHeight;
+		stepNum = itNum.getValue();
+
+		lowR = rStart.getValue();
+		lowG = gStart.getValue();
+		lowB = bStart.getValue();
+
+		highR = rStart.getValue();
+		highB = gStart.getValue();
+		highG = bStart.getValue();
+
+
+		qm = new QuadMap(gfl, false, new Color(lowR, lowG, lowB), new Color(lowR, lowG, lowB), stepNum);
+		mp = new MapDrawer(qm);
+	}
 
 	@Override
 	public void init(GLAutoDrawable glAutoDrawable)
@@ -176,14 +187,13 @@ static MapDrawer mp;
 
 	}
 
-
 	@Override
 	public void reshape(GLAutoDrawable glautodrawable, int x, int y, int width, int height)
 	{
 		System.out.println("Entering reshape(); x=" + x + " y=" + y + " width=" + width + " height=" + height);
 		//Get the context
 		GL2 gl = glautodrawable.getGL().getGL2();
-		if(height <= 0)
+		if (height <= 0)
 		{
 			height = 1;
 		}
@@ -193,7 +203,6 @@ static MapDrawer mp;
 		gl.glLoadIdentity();
 		glu.gluPerspective(fov, aspectRatio, zNear, zFar);
 	}
-
 
 	@Override
 	public void dispose(GLAutoDrawable glAutoDrawable)
@@ -215,20 +224,6 @@ static MapDrawer mp;
 
 	}
 
-	double fov = 45;
-	double aspectRatio = 1;
-	double zNear = 0.1;
-	double zFar = 100;
-	double[] eyePos = {1, 1, 3};
-
-	double[] targetPos = {0, 0, 0};
-	double[] upVector = {0, 0, 1};
-	double dIncrement = .2;
-	double aIncrement = 0.1;
-	double eyeDist = Math.sqrt(eyePos[0] * eyePos[0] + eyePos[1] * eyePos[1] + eyePos[2] * eyePos[2]);
-	double phi = 0;
-	double theta = 90.0 / 180.0 * Math.PI;
-
 	@Override
 	public void keyTyped(KeyEvent ke)
 	{
@@ -236,7 +231,7 @@ static MapDrawer mp;
 		System.out.println(ke.getKeyChar());
 		char key = ke.getKeyChar();
 		boolean updateSpherical = false, updateCartesian = false;
-		switch(key)
+		switch (key)
 		{
 			case 'x':
 			case 'X':
@@ -270,13 +265,13 @@ static MapDrawer mp;
 				break;
 		}
 
-		if(updateSpherical)
+		if (updateSpherical)
 		{
 			eyeDist = Math.sqrt(eyePos[0] * eyePos[0] + eyePos[1] * eyePos[1] + eyePos[2] * eyePos[2]);
 			theta = Math.atan2(eyePos[2], eyePos[0]);
 			phi = Math.acos(eyePos[1] / eyeDist);
 		}
-		if(updateCartesian)
+		if (updateCartesian)
 		{
 			eyePos[0] = eyeDist * Math.cos(theta) * Math.sin(phi);
 			eyePos[2] = eyeDist * Math.sin(theta) * Math.sin(phi);
@@ -285,16 +280,4 @@ static MapDrawer mp;
 		//Redisplay
 		canvas.display();
 	}
-
-	ActionListener redOp = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			JButton b = (JButton) arg0.getSource();
-
-
-			qm = new QuadMap(new gridFloatReader(inputString.getText()), wireframe.isSelected() , new Color(rStart.getValue(), gStart.getValue(), bStart.getValue()), new Color(rStop.getValue(), gStop.getValue(), bStop.getValue()), itNum.getValue() + 1);
-			canvas.display();
-			//mp = new MapDrawer(qm);
-		}
-	};
 }

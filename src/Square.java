@@ -7,15 +7,12 @@ import java.awt.*;
  */
 public class Square
 {
+	private final double[][] heights = new double[2][2];
 	public int x;
 	public int y;
-
 	public double xScale = 1;
 	public double yScale = 1;
 	double ogh;
-
-	private final double[][] heights = new double[2][2];
-
 	private Coordinate[][] corners = new Coordinate[2][2];
 
 	public Square(int x, int y, float xScale, float yScale, gridFloatReader gfl)
@@ -29,7 +26,6 @@ public class Square
 		this.yScale = 2.0 / (double) gfl.height[0].length;
 
 		double hDif = gfl.maxHeight - gfl.minHeight;
-
 
 
 		corners[0][0] = new Coordinate(((double) x) * this.xScale - 1.0, ((double) y) * this.yScale - 1.0);
@@ -53,9 +49,9 @@ public class Square
 
 		boolean[][] overUnder = new boolean[2][2];
 
-		for(int x = 0; x < 2; x++)
+		for (int x = 0; x < 2; x++)
 		{
-			for(int y = 0; y < 2; y++)
+			for (int y = 0; y < 2; y++)
 			{
 				overUnder[x][y] = (this.heights[x][y] > height);
 			}
@@ -68,27 +64,27 @@ public class Square
 		//bottom = 3
 
 		boolean[] sideTrue = new boolean[4];
-		for(int x = 0; x < 4; x++)
+		for (int x = 0; x < 4; x++)
 		{
 			sideTrue[x] = false;
 		}
 
-		if(overUnder[0][0] != overUnder[0][1])
+		if (overUnder[0][0] != overUnder[0][1])
 		{
 			numTrue++;
 			sideTrue[0] = true;
 		}
-		if(overUnder[0][1] != overUnder[1][1])
+		if (overUnder[0][1] != overUnder[1][1])
 		{
 			numTrue++;
 			sideTrue[1] = true;
 		}
-		if(overUnder[1][1] != overUnder[1][0])
+		if (overUnder[1][1] != overUnder[1][0])
 		{
 			numTrue++;
 			sideTrue[2] = true;
 		}
-		if(overUnder[1][0] != overUnder[0][0])
+		if (overUnder[1][0] != overUnder[0][0])
 		{
 			numTrue++;
 			sideTrue[3] = true;
@@ -102,21 +98,23 @@ public class Square
 
 		//if 0 do nothing. SHould never be an odd number. that would be a problem and would make no sense.
 
-		if(numTrue == 2)
+		if (numTrue == 2)
 		{
 			gl.glColor3d((float) color.getRed() / 255f, (float) color.getGreen() / 255f, (float) color.getBlue() / 255f);
 			gl.glBegin(GL2.GL_LINES);
 			{
-				for(int x = 0; x < 4; x++)
+				for (int x = 0; x < 4; x++)
 				{
-					if(sideTrue[x])
+					if (sideTrue[x])
 					{
 						gl.glVertex3d(sideCoords[x].x, sideCoords[x].y, height);
 					}
 				}
 
-			}gl.glEnd();
-		} else if(numTrue == 4)//just always do one case. It should work? Nobody knows.
+			}
+			gl.glEnd();
+		}
+		else if (numTrue == 4)//just always do one case. It should work? Nobody knows.
 		{
 			gl.glBegin(GL2.GL_LINES);
 			{
@@ -128,9 +126,10 @@ public class Square
 			{
 				gl.glVertex3d(sideCoords[2].x, sideCoords[2].y, height);
 				gl.glVertex3d(sideCoords[3].x, sideCoords[3].y, height);
-			}gl.glEnd();
+			}
+			gl.glEnd();
 		}
-	//	System.out.println("in2" + heights[0][0]);
+		//	System.out.println("in2" + heights[0][0]);
 
 
 	}

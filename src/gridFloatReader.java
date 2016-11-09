@@ -5,16 +5,33 @@ import java.util.StringTokenizer;
 public class gridFloatReader
 {
 
+	public int ncols, nrows, nodata, nodatacells, datacells;
+	public double xllcorner, yllcorner, cellsize, yulcorner, xulcorner;
+	public double maxHeight, minHeight, avgHeight, maxHeightX, maxHeightY, minHeightX, minHeightY, sumHeight;
+	public double minLat, minLong, maxLat, maxLong;
+	public double northSide, southSide, eastSide, westSide, cellsizedx, cellsizedy;
+	public int maxHeightxi, maxHeightyi, minHeightxi, minHeightyi;
+	public float[][] height;
+	//Instance variables
+	private FileInputStream projectf, headerf, heightf;
+	private BufferedReader prjdata, hdrdata;
+	private DataInputStream heightdata;
+	//Metadata
+	private String projection, datum, spheroid, units, zunits, parameters; //From prj file
+	private String ncolss, nrowss, xllcorners, yllcorners, cellsizes, nodatas; //From hdr
+	private boolean verbose = true;
 	public gridFloatReader(String basename)
 	{
 		//Create input stream objects
 		try
 		{
-			if(verbose)
+			if (verbose)
+			{
 				projectf = new FileInputStream(basename + ".prj");
+			}
 			headerf = new FileInputStream(basename + ".hdr");
 			heightf = new FileInputStream(basename + ".flt");
-		} catch(FileNotFoundException e)
+		} catch (FileNotFoundException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -25,6 +42,12 @@ public class gridFloatReader
 		//Main processing method
 		processfile();
 
+	}
+
+	//This could be removed. Main is here only to test
+	public static void main(String[] args) throws FileNotFoundException
+	{
+		new gridFloatReader("data/NED_86879038");
 	}
 
 	public void processfile()
@@ -75,7 +98,7 @@ public class gridFloatReader
 			nd.nextToken();
 			nodatas = nd.nextToken();
 			nodata = Integer.parseInt(nodatas);
-			if(verbose) //Print file info
+			if (verbose) //Print file info
 			{
 				System.out.println("Cols:" + ncols + " x Rows:" + nrows + " = " + ncols * nrows + " points");
 				System.out.println("Longitude: (" + minLong + "," + maxLong + ")");
@@ -90,19 +113,22 @@ public class gridFloatReader
 			maxHeight = Double.NEGATIVE_INFINITY;
 			minHeight = Double.POSITIVE_INFINITY;
 			height = new float[nrows][ncols];
-			for(int i = 0; i < nrows; i++)
+			for (int i = 0; i < nrows; i++)
 			{
-				for(int j = 0; j < ncols; j++)
+				for (int j = 0; j < ncols; j++)
 				{
 					height[i][j] = Float.intBitsToFloat(Integer.reverseBytes(heightdata.readInt())); //IEEE 32-bit float
 
-					if(height[i][j] == nodata) nodatacells++;
+					if (height[i][j] == nodata)
+					{
+						nodatacells++;
+					}
 					else
 					{
 						sumHeight += height[i][j];
 						datacells++;
 					}
-					if(height[i][j] > maxHeight) //New max height
+					if (height[i][j] > maxHeight) //New max height
 					{
 						maxHeight = height[i][j];
 						maxHeightyi = i;
@@ -110,7 +136,7 @@ public class gridFloatReader
 						maxHeightX = longitude(maxHeightxi);
 						maxHeightY = latitude(maxHeightyi);
 					}
-					if(height[i][j] < minHeight) //New min height
+					if (height[i][j] < minHeight) //New min height
 					{
 						minHeight = height[i][j];
 						minHeightyi = i;
@@ -122,14 +148,14 @@ public class gridFloatReader
 				}
 			}
 			avgHeight = sumHeight / datacells;
-			if(verbose) //Print data info
+			if (verbose) //Print data info
 			{
 				System.out.println("Max altitude is " + maxHeight + " m, " + m2f(maxHeight) + " ft Long(" + maxHeightX + ") Lat(" + maxHeightY + ")");
 				System.out.println("Min altitude is " + minHeight + " m, " + m2f(minHeight) + " Long(" + minHeightX + ") Lat(" + minHeightY + ")");
 				System.out.println("Avg altitude is " + avgHeight + " m, " + m2f(avgHeight) + " ft");
 			}
 
-		} catch(IOException e)
+		} catch (IOException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -243,16 +269,43 @@ public class gridFloatReader
 		position.put(2, height[r][c]);
 		//Calculate case [ulc=0, llc=1, urc=2, lrc=3, up=4, down=5, left=6, right=7, middle=8] (nine cases)
 		int type = 9;
-		if(r == 0 && c == 0) type = 0;
-		else if(r == (nrows - 1) && c == 0) type = 1;
-		else if(r == 0 && c == (ncols - 1)) type = 2;
-		else if(r == (nrows - 1) && c == (ncols - 1)) type = 3;
-		else if(r == 0) type = 4;
-		else if(r == (nrows - 1)) type = 5;
-		else if(c == 0) type = 6;
-		else if(c == (ncols - 1)) type = 7;
-		else type = 8;
-		switch(type)
+		if (r == 0 && c == 0)
+		{
+			type = 0;
+		}
+		else if (r == (nrows - 1) && c == 0)
+		{
+			type = 1;
+		}
+		else if (r == 0 && c == (ncols - 1))
+		{
+			type = 2;
+		}
+		else if (r == (nrows - 1) && c == (ncols - 1))
+		{
+			type = 3;
+		}
+		else if (r == 0)
+		{
+			type = 4;
+		}
+		else if (r == (nrows - 1))
+		{
+			type = 5;
+		}
+		else if (c == 0)
+		{
+			type = 6;
+		}
+		else if (c == (ncols - 1))
+		{
+			type = 7;
+		}
+		else
+		{
+			type = 8;
+		}
+		switch (type)
 		{
 			case 0: //Upper-left corner
 				surfn = 2;
@@ -380,11 +433,11 @@ public class gridFloatReader
 
 		}
 		//Calculate surf normals
-		for(int i = 0; i < surfn - 1; i++)
+		for (int i = 0; i < surfn - 1; i++)
 		{
 			surfnormal[i] = cross(DoubleBuffer.wrap(surfvec[i]), DoubleBuffer.wrap(surfvec[i + 1])).array();
 			//Update normal
-			for(int j = 0; j < 3; j++)
+			for (int j = 0; j < 3; j++)
 			{
 				double current = normal.get(j);
 				normal.put(j, current + surfnormal[i][j]);
@@ -393,33 +446,11 @@ public class gridFloatReader
 		//Normalize
 
 		double mag = Math.sqrt(normal.get(0) * normal.get(0) + normal.get(1) * normal.get(1) + normal.get(2) * normal.get(2));
-		for(int j = 0; j < 3; j++)
+		for (int j = 0; j < 3; j++)
 		{
 			double current = normal.get(j);
 			normal.put(j, current / mag);
 		}
 		return normal;
-	}
-
-	//Instance variables
-	private FileInputStream projectf, headerf, heightf;
-	private BufferedReader prjdata, hdrdata;
-	private DataInputStream heightdata;
-	//Metadata
-	private String projection, datum, spheroid, units, zunits, parameters; //From prj file
-	private String ncolss, nrowss, xllcorners, yllcorners, cellsizes, nodatas; //From hdr
-	public int ncols, nrows, nodata, nodatacells, datacells;
-	public double xllcorner, yllcorner, cellsize, yulcorner, xulcorner;
-	public double maxHeight, minHeight, avgHeight, maxHeightX, maxHeightY, minHeightX, minHeightY, sumHeight;
-	public double minLat, minLong, maxLat, maxLong;
-	public double northSide, southSide, eastSide, westSide, cellsizedx, cellsizedy;
-	public int maxHeightxi, maxHeightyi, minHeightxi, minHeightyi;
-	private boolean verbose = true;
-	public float[][] height;
-
-	//This could be removed. Main is here only to test
-	public static void main(String[] args) throws FileNotFoundException
-	{
-		new gridFloatReader("data/NED_86879038");
 	}
 }

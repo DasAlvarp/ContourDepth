@@ -19,7 +19,7 @@ public class Utilities
 	public static double[] Add(double[] v1, double[] v2)
 	{
 		double[] toRet = new double[v1.length];
-		for(int x = 0; x < toRet.length; x++)
+		for (int x = 0; x < toRet.length; x++)
 		{
 			toRet[x] = v1[x] + v2[x];
 		}
@@ -30,7 +30,7 @@ public class Utilities
 	public static double[] Subtract(double[] v1, double[] v2)
 	{
 		double[] toRet = new double[v1.length];
-		for(int x = 0; x < toRet.length; x++)
+		for (int x = 0; x < toRet.length; x++)
 		{
 			toRet[x] = v1[x] - v2[x];
 		}
@@ -41,7 +41,7 @@ public class Utilities
 	public static double[] Multiply(double scalar, double[] vals)
 	{
 		double[] toRet = new double[vals.length];
-		for(int x = 0; x < vals.length; x++)
+		for (int x = 0; x < vals.length; x++)
 		{
 			toRet[x] = vals[x] * scalar;
 		}
@@ -50,10 +50,11 @@ public class Utilities
 
 	public static float GetMin(float f1, float f2)
 	{
-		if(f1 < f2)
+		if (f1 < f2)
 		{
 			return f1;
-		} else
+		}
+		else
 		{
 			return f2;
 		}
