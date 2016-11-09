@@ -38,7 +38,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 
 	static boolean marker = true;
 
-	public MapDrawer()
+	public MapDrawer(gridFloatReader gfl, int width, int height,)
 	{
 
 		super("Mapper");
@@ -76,51 +76,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	}
 */
 
-	public static void main(String[] args)
-	{
 
-		gfl = new gridFloatReader(args[0]);
-
-		if(args[1].equals("auto"))
-		{
-			low = gfl.minHeight;
-			high = gfl.maxHeight;
-			stepNum = 10;
-
-			lowR = Integer.parseInt(args[2]);
-			lowG = Integer.parseInt(args[3]);
-			lowB = Integer.parseInt(args[4]);
-
-			highR = Integer.parseInt(args[5]);
-			highB = Integer.parseInt(args[6]);
-			highG = Integer.parseInt(args[7]);
-
-			if(args[8].equals("marker=false"))
-			{
-				marker = false;
-			}
-		} else
-		{
-			low = Double.parseDouble(args[1]);
-			high = Double.parseDouble(args[2]);
-			stepNum = Integer.parseInt(args[3]);
-
-			lowR = Integer.parseInt(args[4]);
-			lowG = Integer.parseInt(args[5]);
-			lowB = Integer.parseInt(args[6]);
-
-			highR = Integer.parseInt(args[7]);
-			highB = Integer.parseInt(args[8]);
-			highG = Integer.parseInt(args[9]);
-
-			if(args[10].equals("marker=false"))
-			{
-				marker = false;
-			}
-		}
-		qm = new QuadMap(gfl, new Color(lowR, lowG, lowB), new Color(lowR, lowG, lowB));
-		new MapDrawer();
-	}
 
 	@Override
 	public void init(GLAutoDrawable glAutoDrawable)
@@ -143,7 +99,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		//Set-up the camera
-		glu.gluLookAt(eyePos[0], eyePos[1], eyePos[2], targetPos[0], targetPos[1], targetPos[2], upVector[0], upVector[1], upVector[2]);
+		glu.gluLookAt(eyePos[0], eyePos[2], eyePos[1], targetPos[0], targetPos[2], targetPos[1], upVector[0], upVector[1], upVector[2]);
 		//glu.gluLookAt(3, 0, 0, 0, 0, 0, 0, 1, 0);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
@@ -153,9 +109,9 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		//DrawArea(gl, stepNum, new Color(lowR, lowG, lowB), new Color(highR, highG, highB));
 		gl.glPushMatrix();
 		{
-			gl.glRotated(90, 0, 0, -1);
-			gl.glRotated(45, 0, 1, 0);
-			gl.glRotated(45, 1, 0, 0);
+			gl.glRotated(45, 0, 0, -1);
+			gl.glRotated(-20, 0, 1, 0);
+			gl.glRotated(-20, 1, 0, 0);
 			qm.DrawArea(gl);
 
 		}
@@ -328,14 +284,14 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		if(updateSpherical)
 		{
 			eyeDist = Math.sqrt(eyePos[0] * eyePos[0] + eyePos[1] * eyePos[1] + eyePos[2] * eyePos[2]);
-			theta = Math.atan2(eyePos[1], eyePos[0]);
-			phi = Math.acos(eyePos[2] / eyeDist);
+			theta = Math.atan2(eyePos[2], eyePos[0]);
+			phi = Math.acos(eyePos[1] / eyeDist);
 		}
 		if(updateCartesian)
 		{
 			eyePos[0] = eyeDist * Math.cos(theta) * Math.sin(phi);
-			eyePos[1] = eyeDist * Math.sin(theta) * Math.sin(phi);
-			eyePos[2] = -eyeDist * Math.cos(phi);
+			eyePos[2] = eyeDist * Math.sin(theta) * Math.sin(phi);
+			eyePos[1] = eyeDist * Math.cos(phi);
 		}
 		//Redisplay
 		canvas.display();

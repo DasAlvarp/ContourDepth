@@ -106,8 +106,7 @@ public class Square
 						gl.glVertex3d(sideCoords[x].x, sideCoords[x].y, height);
 					}
 				}
-			}
-			gl.glEnd();
+			}gl.glEnd();
 		} else if(numTrue == 4)//just always do one case. It should work? Nobody knows.
 		{
 			gl.glBegin(GL2.GL_LINES);
@@ -120,22 +119,14 @@ public class Square
 			{
 				gl.glVertex3d(sideCoords[2].x, sideCoords[2].y, height);
 				gl.glVertex3d(sideCoords[3].x, sideCoords[3].y, height);
-			}
-			gl.glEnd();
+			}gl.glEnd();
 		}
 
 	}
 
-
+	//Draw a quad,
 	public void QuadInstructions(GL2 gl, Color cmin, Color cmax)
 	{
-		/*for(int x = 0; x < 2; x++)
-		{
-			for(int y = 0; y < 2; y++)
-			{
-				System.out.println("Loc: " + corners[x][y].x + ", " + corners[x][y].y + " \nHeight: " + heights[x][y]);
-			}
-		}*/
 		double[] colorDif = Utilities.Subtract(Utilities.ColorToDouble(cmax), Utilities.ColorToDouble(cmin));
 		double[] color = Utilities.ColorToDouble(cmin);
 		color = Utilities.Add(color, Utilities.Multiply((heights[1][1] + 1.0) / 2.0, colorDif));

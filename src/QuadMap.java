@@ -59,14 +59,18 @@ public class QuadMap
 
 		for(int x = 0; x < strips.length; x++)
 		{
-			DrawStrip(gl, x);
+			DrawStrip(gl, x, false);
 		}
 
 	}
 
-	private void DrawStrip(GL2 gl, int strip)
+	private void DrawStrip(GL2 gl, int strip, boolean wireframe)
 	{
-		gl.glBegin(GL2.GL_QUAD_STRIP);
+		if(wireframe)
+			gl.glBegin(GL2.GL_QUADS);
+		else
+			gl.glBegin(GL2.GL_QUAD_STRIP);
+
 
 		for(int x = 0; x < strips[strip].length; x++)
 		{
