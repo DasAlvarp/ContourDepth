@@ -14,12 +14,15 @@ public class QuadMap
 	Color low, hi;
 	int steps;
 
-	public QuadMap(gridFloatReader gfl, Color lowColor, Color highColor, int stepNum)
+	boolean wire;
+
+	public QuadMap(gridFloatReader gfl, boolean wire, Color lowColor, Color highColor, int stepNum)
 	{
 		strips = new Square[gfl.nrows - 1][gfl.ncols - 1];
 		low = lowColor;
 		hi = highColor;
 		steps = stepNum;
+		this.wire = wire;
 		FillStrips(gfl);
 	}
 
@@ -31,7 +34,6 @@ public class QuadMap
 		{
 			for(int y = 0; y < gfl.ncols - 1; y++)
 			{
-
 				strips[x][y] = new Square(x, y, scaling, scaling, gfl);
 			}
 		}
@@ -48,9 +50,16 @@ public class QuadMap
 
 	}
 
-	private void DrawStrip(GL2 gl, int strip, boolean wireframe, Color colorLow, Color colorHigh, int contourNum)
+	private void DrawStrip(GL2 gl, int strip, boolean wireframe, Color colorLow, Color colorHigh, double contourNum)
 	{
-		if(wireframe)
+		for(double x = 0; x < contourNum; x++)
+		{
+		//x,y,z, y is height.
+			for(int y = 0; y < strips[strip].length; y++)
+				strips[strip][y].DrawContour(  x/ contourNum, gl, Color.black);
+		}
+
+		if(wire)
 			gl.glBegin(GL2.GL_QUADS);
 		else
 			gl.glBegin(GL2.GL_QUAD_STRIP);
@@ -59,16 +68,11 @@ public class QuadMap
 		for(int x = 0; x < strips[strip].length; x++)
 		{
 
-			//x,y,z, y is height.
+		//x,y,z, y is height.
 			strips[strip][x].QuadInstructions(gl, colorLow, colorHigh);
 		}
 		gl.glEnd();
 
-		for(int x = -contourNum; x < contourNum; x++)
-		{
 
-			//x,y,z, y is height.
-			strips[strip][x].DrawContour((float)((float)x - (float)contourNum / 2.0) / (float)contourNum , gl, Color.black);
-		}
 	}
 }

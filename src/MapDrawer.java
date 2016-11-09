@@ -13,14 +13,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 {
 	private GLCanvas canvas;
 
-
 	GLU glu = new GLU();
-
-	GLProfile glProfile = null;
-	GLCapabilities glcapabilities = null;
-
-	public float angleX = 0;
-
 
 	static gridFloatReader gfl = new gridFloatReader("ned_86879038");;
 
@@ -32,9 +25,6 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	static public int stepNum, lowR, lowG, lowB, highR, highG, highB;
 
 	public static QuadMap qm;
-
-	static boolean marker = true;
-
 
 	//jpanel section
 	static JPanel menuParts;
@@ -60,12 +50,14 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	static JLabel hiBl = new JLabel("High Blue");
 	static JLabel lab1 = new JLabel("Number of Steps");
 
+	static JCheckBox wireframe = new JCheckBox("Wireframe");
+
 static MapDrawer mp;
 	public static void main(String[] args)
 	{
 		menuParts = new JPanel(new GridLayout(2,8));
 		menuParts.add(loadLabel);
-		menuParts.add(new JLabel(""));
+		menuParts.add(wireframe);
 		menuParts.add(lowRl);
 		menuParts.add(lowGl);
 		menuParts.add(lowBl);
@@ -86,7 +78,6 @@ static MapDrawer mp;
 		menuParts.add(bStop);
 		menuParts.add(itNum);
 
-		go.addActionListener(redOp);
 
 
 		low = gfl.minHeight;
@@ -102,10 +93,10 @@ static MapDrawer mp;
 		highG = bStart.getValue();
 
 
-		marker = false;
 
 
-		qm = new QuadMap(gfl, new Color(lowR, lowG, lowB), new Color(lowR, lowG, lowB), stepNum);
+
+		qm = new QuadMap(gfl, false, new Color(lowR, lowG, lowB), new Color(lowR, lowG, lowB), stepNum);
 		mp = new MapDrawer(qm);
 	}
 
@@ -113,12 +104,15 @@ static MapDrawer mp;
 	public MapDrawer(QuadMap qm)
 	{
 		super("Mapper");
+		go.addActionListener(redOp);
+
 		this.qm = qm;
 
 		canvas = new GLCanvas();
 		canvas.addGLEventListener(this);
 
 		getContentPane().add(canvas);
+		menuParts.setPreferredSize(new Dimension((int)width, 80));
 		getContentPane().add(menuParts, BorderLayout.NORTH);
 
 		addWindowListener(new WindowAdapter()
@@ -193,7 +187,7 @@ static MapDrawer mp;
 		{
 			height = 1;
 		}
-		final float h = (float) width / (float) height;
+
 		gl.glViewport(3, 6, width, height);
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
@@ -292,14 +286,15 @@ static MapDrawer mp;
 		canvas.display();
 	}
 
-	static ActionListener redOp = new ActionListener() {
+	ActionListener redOp = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			JButton b = (JButton) arg0.getSource();
-			System.out.println("doot doot homeslice");
-			qm = new QuadMap(new gridFloatReader(inputString.getText()), new Color(rStart.getValue(), gStart.getValue(), bStart.getValue()), new Color(rStop.getValue(), gStop.getValue(), bStop.getValue()), 12);
 
-			mp = new MapDrawer(qm);
+
+			qm = new QuadMap(new gridFloatReader(inputString.getText()), wireframe.isSelected() , new Color(rStart.getValue(), gStart.getValue(), bStart.getValue()), new Color(rStop.getValue(), gStop.getValue(), bStop.getValue()), itNum.getValue() + 1);
+			canvas.display();
+			//mp = new MapDrawer(qm);
 		}
 	};
 }
