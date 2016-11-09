@@ -62,9 +62,6 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		@Override
 		public void actionPerformed(ActionEvent arg0)
 		{
-			JButton b = (JButton) arg0.getSource();
-
-
 			qm = new QuadMap(new gridFloatReader(inputString.getText()), wireframe.isSelected(), new Color(rStart.getValue(), gStart.getValue(), bStart.getValue()), new Color(rStop.getValue(), gStop.getValue(), bStop.getValue()), itNum.getValue() + 1);
 			canvas.display();
 			//mp = new MapDrawer(qm);

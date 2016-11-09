@@ -129,8 +129,7 @@ public class Square
 			}
 			gl.glEnd();
 		}
-		//	System.out.println("in2" + heights[0][0]);
-
+		//	System.out.println("in2" + heights[0][0]);W
 
 	}
 
@@ -144,17 +143,8 @@ public class Square
 
 		gl.glColor3d(color[0], color[1], color[2]);
 		gl.glVertex3d(corners[1][1].x, corners[1][1].y, this.heights[1][1]);
-
-		//color = Utilities.Add(color, Utilities.Multiply((heights[0][1] + 1.0 )/ 2.0, colorDif));
-		//gl.glColor3d(color[0], color[1], color[2]);
 		gl.glVertex3d(corners[0][1].x, corners[0][1].y, this.heights[0][1]);
-
-		//color = Utilities.Add(color, Utilities.Multiply((heights[1][0] + 1.0 )/ 2.0, colorDif));
-		//gl.glColor3d(color[0], color[1], color[2]);
 		gl.glVertex3d(corners[1][0].x, corners[1][0].y, this.heights[1][0]);
-
-		//color = Utilities.Add(color, Utilities.Multiply((heights[0][0] + 1.0 )/ 2.0, colorDif));
-		//gl.glColor3d(color[0], color[1], color[2]);
 		gl.glVertex3d(corners[0][0].x, corners[0][0].y, this.heights[0][0]);
 	}
 }
