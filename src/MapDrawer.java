@@ -4,10 +4,7 @@ import com.jogamp.opengl.glu.GLU;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
 /**
  * Created by alvarpq on 10/5/2016.
@@ -25,10 +22,10 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	public float angleX = 0;
 
 
-	static gridFloatReader gfl;
+	static gridFloatReader gfl = new gridFloatReader("ned_86879038");;
 
 
-	float height = 600;
+	float height = 1200;
 	float width = 1200;
 
 	static public double low, high;
@@ -38,15 +35,91 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 
 	static boolean marker = true;
 
-	public MapDrawer(gridFloatReader gfl, int width, int height,)
-	{
 
+	//jpanel section
+	static JPanel menuParts;
+	static JButton go = new JButton("Generate new maps");
+	static JTextField inputString = new JTextField();;
+
+	static JSlider rStart = new JSlider(JSlider.VERTICAL, 0, 255, 0);
+	static JSlider gStart = new JSlider(JSlider.VERTICAL, 0, 255, 0);
+	static JSlider bStart = new JSlider(JSlider.VERTICAL, 0, 255, 0);
+
+	static JSlider rStop = new JSlider(JSlider.VERTICAL, 0, 255, 255);
+	static JSlider gStop = new JSlider(JSlider.VERTICAL, 0, 255, 255);
+	static JSlider bStop = new JSlider(JSlider.VERTICAL, 0, 255, 255);
+
+	static JSlider itNum = new JSlider(JSlider.VERTICAL, 0, 100, 10);
+
+	static JLabel loadLabel = new JLabel("File to Load");
+	static JLabel lowRl = new JLabel("Low Red");
+	static JLabel lowGl = new JLabel("Low Green");
+	static JLabel lowBl = new JLabel("Low Blue");
+	static JLabel hiRl = new JLabel("High Red");
+	static JLabel hiGl = new JLabel("High Green");
+	static JLabel hiBl = new JLabel("High Blue");
+	static JLabel lab1 = new JLabel("Number of Steps");
+
+static MapDrawer mp;
+	public static void main(String[] args)
+	{
+		menuParts = new JPanel(new GridLayout(2,8));
+		menuParts.add(loadLabel);
+		menuParts.add(new JLabel(""));
+		menuParts.add(lowRl);
+		menuParts.add(lowGl);
+		menuParts.add(lowBl);
+		menuParts.add(hiRl);
+		menuParts.add(hiGl);
+		menuParts.add(hiBl);
+		menuParts.add(lab1);
+
+
+
+		menuParts.add(inputString);
+		menuParts.add(go);
+		menuParts.add(rStart);
+		menuParts.add(gStart);
+		menuParts.add(bStart);
+		menuParts.add(rStop);
+		menuParts.add(gStop);
+		menuParts.add(bStop);
+		menuParts.add(itNum);
+
+		go.addActionListener(redOp);
+
+
+		low = gfl.minHeight;
+		high = gfl.maxHeight;
+		stepNum = itNum.getValue();
+
+		lowR = rStart.getValue();
+		lowG = gStart.getValue();
+		lowB = bStart.getValue();
+
+		highR = rStart.getValue();
+		highB = gStart.getValue();
+		highG = bStart.getValue();
+
+
+		marker = false;
+
+
+		qm = new QuadMap(gfl, new Color(lowR, lowG, lowB), new Color(lowR, lowG, lowB), stepNum);
+		mp = new MapDrawer(qm);
+	}
+
+
+	public MapDrawer(QuadMap qm)
+	{
 		super("Mapper");
+		this.qm = qm;
 
 		canvas = new GLCanvas();
 		canvas.addGLEventListener(this);
 
 		getContentPane().add(canvas);
+		getContentPane().add(menuParts, BorderLayout.NORTH);
 
 		addWindowListener(new WindowAdapter()
 		{
@@ -66,16 +139,6 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 
 
 	}
-
-/*
-	public static void createAndShowGUI(){
-		GL2ColorCubePerspective s = new GL2ColorCubePerspective();
-		s.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		s.pack();
-		s.setVisible(true);
-	}
-*/
-
 
 
 	@Override
@@ -120,46 +183,6 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	}
 
 
-	//draws all contour lines
-	public void DrawArea(GL2 gl, int stepNum, Color colorStart, Color colorEnd)
-	{
-		float scaling = Utilities.GetMin(width / (float) gfl.height.length, height / (float) gfl.height[0].length);
-		double stepSize = (gfl.maxHeight - gfl.minHeight) / stepNum;
-		double[] startColor = new double[]{(double) colorStart.getRed() / 255.0, (double) colorStart.getGreen() / 255.0, (double) colorStart.getBlue() / 255.0};
-		double[] endColor = new double[]{(double) colorEnd.getRed() / 255.0, (double) colorEnd.getGreen() / 255.0, (double) colorEnd.getBlue() / 255.0};
-
-		double[] colorStep = new double[3];
-		for(int x = 0; x < 3; x++)
-		{
-			colorStep[x] = (endColor[x] - startColor[x]) / stepNum;
-		}
-
-		for(int s = 0; s < stepNum; s++)
-		{
-			DrawLevel((float) gfl.minHeight + s * (float) stepSize, gl, Utilities.DoubleToColor(Utilities.Add(startColor, Utilities.Multiply(s, colorStep))), scaling);
-
-		}
-	}
-
-	//draws one level of contour lines
-	public void DrawLevel(float level, GL2 gl, Color color, float scaling)
-	{
-		for(int x = 0; x < gfl.height.length - 1; x++)
-		{
-			for(int y = 0; y < gfl.height[x].length - 1; y++)
-			{
-				Square sq = new Square(x, y, scaling, scaling, gfl);
-				sq.DrawContour(level, gl, color);
-
-			}
-		}
-		if(marker)
-		{
-			DrawStar(scaling * (float) gfl.maxHeightxi, scaling * (float) gfl.maxHeightyi, Color.YELLOW, gl);
-		}
-	}
-
-
 	@Override
 	public void reshape(GLAutoDrawable glautodrawable, int x, int y, int width, int height)
 	{
@@ -182,34 +205,6 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	public void dispose(GLAutoDrawable glAutoDrawable)
 	{
 
-	}
-
-	public void DrawStar(float x, float y, Color c, GL2 gl)
-	{
-		gl.glColor3d(Utilities.ColorToDouble(c)[0], Utilities.ColorToDouble(c)[1], Utilities.ColorToDouble(c)[2]);
-		gl.glBegin(GL2.GL_POLYGON);
-		{//the most disappointing star you've seen in your life.
-			gl.glVertex2f(x, y);
-			//-
-			gl.glVertex2f(x + 10, y);
-			// /
-			gl.glVertex2f(x + 10, y + 10);
-			//\
-			gl.glVertex2f(x + 20, y);
-			//-
-			gl.glVertex2f(x + 30, y);
-			///
-			gl.glVertex2f(x + 20, y - 5f);
-			//\
-			gl.glVertex2f(x + 30, y - 10);
-			//-
-			gl.glVertex2f(x + 20, y - 10);
-			///
-			gl.glVertex2f(x + 15f, y - 20);
-			//\
-			gl.glVertex2f(x + 10, y - 10);
-		}
-		gl.glEnd();
 	}
 
 	@Override
@@ -296,4 +291,15 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		//Redisplay
 		canvas.display();
 	}
+
+	static ActionListener redOp = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			JButton b = (JButton) arg0.getSource();
+			System.out.println("doot doot homeslice");
+			qm = new QuadMap(new gridFloatReader(inputString.getText()), new Color(rStart.getValue(), gStart.getValue(), bStart.getValue()), new Color(rStop.getValue(), gStop.getValue(), bStop.getValue()), 12);
+
+			mp = new MapDrawer(qm);
+		}
+	};
 }

@@ -11,29 +11,19 @@ public class QuadMap
 
 	private float scaling = 1;
 
-	public QuadMap(gridFloatReader gfl, Color lowColor, Color highColor)
+	Color low, hi;
+	int steps;
+
+	public QuadMap(gridFloatReader gfl, Color lowColor, Color highColor, int stepNum)
 	{
 		strips = new Square[gfl.nrows - 1][gfl.ncols - 1];
+		low = lowColor;
+		hi = highColor;
+		steps = stepNum;
 		FillStrips(gfl);
 	}
 
-	public QuadMap(gridFloatReader gfl, Color lowColor, Color highColor, float scale)
-	{
-		this(gfl, lowColor, highColor);
-		scaling = scale;
-		FillStrips(gfl);
 
-	}
-
-	public void DrawContours(int num)
-	{
-
-	}
-
-	private void DrawContour(double level)
-	{
-
-	}
 
 	private void FillStrips(gridFloatReader gfl)
 	{
@@ -47,24 +37,18 @@ public class QuadMap
 		}
 	}
 
-	public void SetScale(float scale, gridFloatReader gfl)
-	{
-		scaling = scale;
-		FillStrips(gfl);
-
-	}
 
 	public void DrawArea(GL2 gl)
 	{
 
 		for(int x = 0; x < strips.length; x++)
 		{
-			DrawStrip(gl, x, false);
+			DrawStrip(gl, x, false, low, hi);
 		}
 
 	}
 
-	private void DrawStrip(GL2 gl, int strip, boolean wireframe)
+	private void DrawStrip(GL2 gl, int strip, boolean wireframe, Color colorLow, Color colorHigh)
 	{
 		if(wireframe)
 			gl.glBegin(GL2.GL_QUADS);
@@ -76,7 +60,7 @@ public class QuadMap
 		{
 
 			//x,y,z, y is height.
-			strips[strip][x].QuadInstructions(gl, Color.RED, Color.GREEN);
+			strips[strip][x].QuadInstructions(gl, colorLow, colorHigh);
 		}
 		gl.glEnd();
 
