@@ -43,12 +43,12 @@ public class QuadMap
 
 		for(int x = 0; x < strips.length; x++)
 		{
-			DrawStrip(gl, x, false, low, hi);
+			DrawStrip(gl, x, false, low, hi, steps);
 		}
 
 	}
 
-	private void DrawStrip(GL2 gl, int strip, boolean wireframe, Color colorLow, Color colorHigh)
+	private void DrawStrip(GL2 gl, int strip, boolean wireframe, Color colorLow, Color colorHigh, int contourNum)
 	{
 		if(wireframe)
 			gl.glBegin(GL2.GL_QUADS);
@@ -64,49 +64,11 @@ public class QuadMap
 		}
 		gl.glEnd();
 
-		for(int x = 0; x < strips[strip].length; x++)
+		for(int x = -contourNum; x < contourNum; x++)
 		{
 
 			//x,y,z, y is height.
-			strips[strip][x].DrawContour(0.0, gl, Color.black);
+			strips[strip][x].DrawContour((float)((float)x - (float)contourNum / 2.0) / (float)contourNum , gl, Color.black);
 		}
-
-
-
-
-		/*gl.glBegin(GL2.GL_QUADS);
-		{
-			// Front Face
-			gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-			gl.glVertex3f(1.0f, -1.0f, 1.0f);
-			gl.glVertex3f(1.0f, 1.0f, 1.0f);
-			gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-			// Back Face
-			gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-			gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-			gl.glVertex3f(1.0f, 1.0f, -1.0f);
-			gl.glVertex3f(1.0f, -1.0f, -1.0f);
-
-			gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-			gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-			gl.glVertex3f(1.0f, 1.0f, 1.0f);
-			gl.glVertex3f(1.0f, 1.0f, -1.0f);
-
-			gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-			gl.glVertex3f(1.0f, -1.0f, -1.0f);
-			gl.glVertex3f(1.0f, -1.0f, 1.0f);
-			gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-
-			gl.glVertex3f(1.0f, -1.0f, -1.0f);
-			gl.glVertex3f(1.0f, 1.0f, -1.0f);
-			gl.glVertex3f(1.0f, 1.0f, 1.0f);
-			gl.glVertex3f(1.0f, -1.0f, 1.0f);
-
-			gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-			gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-			gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-			gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-		}
-		gl.glEnd();*/
 	}
 }
