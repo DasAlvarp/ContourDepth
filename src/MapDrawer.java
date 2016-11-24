@@ -15,11 +15,11 @@ import java.awt.event.*;
  */
 public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 {
-	static public double low, high;
-	static public int stepNum, lowR, lowG, lowB, highR, highG, highB;
-	public static QuadMap qm;
+	static private double low, high;
+	static private int stepNum, lowR, lowG, lowB, highR, highG, highB;
+	private static QuadMap qm;
 
-	static gridFloatReader gfl = new gridFloatReader("ned_86879038");
+	private static gridFloatReader gfl = new gridFloatReader("ned_86879038");
 
 
 	//jpanel section
