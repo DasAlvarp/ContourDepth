@@ -18,8 +18,10 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	static public double low, high;
 	static public int stepNum, lowR, lowG, lowB, highR, highG, highB;
 	public static QuadMap qm;
-	;
+
 	static gridFloatReader gfl = new gridFloatReader("ned_86879038");
+
+
 	//jpanel section
 	static JPanel menuParts;
 	static JButton go = new JButton("Generate new maps");
@@ -41,6 +43,8 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	static JLabel hiBl = new JLabel("High Blue");
 	static JLabel lab1 = new JLabel("Number of Steps");
 	static JCheckBox wireframe = new JCheckBox("Wireframe");
+
+	//graphics crap
 	static MapDrawer mp;
 	GLU glu = new GLU();
 	float height = 1200;
@@ -58,8 +62,8 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	double phi = 0;
 	double theta = 90.0 / 180.0 * Math.PI;
 	private GLCanvas canvas;
-	ActionListener redOp = new ActionListener()
-	{
+
+	ActionListener redOp = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent arg0)
 		{
@@ -202,14 +206,12 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	@Override
 	public void keyPressed(KeyEvent ke)
 	{
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void keyReleased(KeyEvent arg0)
 	{
-		// TODO Auto-generated method stub
 
 	}
 
@@ -218,7 +220,6 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	@Override
 	public void keyTyped(KeyEvent ke)
 	{
-		// TODO Auto-generated method stub
 		char key = ke.getKeyChar();
 		boolean updateSpherical = false, updateCartesian = false;
 		switch (key)

@@ -1,5 +1,4 @@
 import com.jogamp.opengl.GL2;
-
 import java.awt.*;
 
 /**
