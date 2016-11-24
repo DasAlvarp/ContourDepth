@@ -15,8 +15,7 @@ import java.awt.event.*;
  */
 public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 {
-	static private double low, high;
-	static private int stepNum, lowR, lowG, lowB, highR, highG, highB;
+	static private int stepNum;
 	private static QuadMap qm;
 
 	private static gridFloatReader gfl = new gridFloatReader("ned_86879038");
@@ -126,19 +125,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		menuParts.add(bStop);
 		menuParts.add(itNum);
 
-
-		low = gfl.minHeight;
-		high = gfl.maxHeight;
 		stepNum = itNum.getValue();
-
-		lowR = rStart.getValue();
-		lowG = gStart.getValue();
-		lowB = bStart.getValue();
-
-		highR = rStart.getValue();
-		highB = gStart.getValue();
-		highG = bStart.getValue();
-
 
 		qm = new QuadMap(gfl, false, Color.black, Color.white, stepNum);
 		mp = new MapDrawer(qm);
@@ -152,7 +139,6 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		glu = new GLU();
 		gl.glClearColor(.8f, .8f, .8f, 0f);
 		gl.glEnable(GL2.GL_DEPTH_TEST);
-
 	}
 
 	@Override
@@ -174,7 +160,6 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 			gl.glRotated(-20, 0, 1, 0);
 			gl.glRotated(-20, 1, 0, 0);*/
 			qm.DrawArea(gl);
-
 		}
 		gl.glPopMatrix();
 	}
@@ -183,7 +168,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	@Override
 	public void reshape(GLAutoDrawable glautodrawable, int x, int y, int width, int height)
 	{
-		System.out.println("Entering reshape(); x=" + x + " y=" + y + " width=" + width + " height=" + height);
+		System.out.println("Entering reshape\n x = " + x + "\ny = " + y + "\nwidth = " + width + "\nheight = " + height);
 		//Get the context
 		GL2 gl = glautodrawable.getGL().getGL2();
 		if (height <= 0)

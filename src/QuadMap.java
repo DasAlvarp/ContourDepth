@@ -40,11 +40,11 @@ public class QuadMap
 	{
 		for (int x = 0; x < strips.length; x++)
 		{
-			DrawStrip(gl, x, false, low, hi, steps);
+			DrawStrip(gl, x, low, hi, steps);
 		}
 	}
 
-	private void DrawStrip(GL2 gl, int strip, boolean wireframe, Color colorLow, Color colorHigh, double contourNum)
+	private void DrawStrip(GL2 gl, int strip, Color colorLow, Color colorHigh, double contourNum)
 	{
 		for (double x = 0; x < contourNum; x++)
 		{
