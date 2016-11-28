@@ -18,6 +18,8 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	static private int stepNum;
 	private static QuadMap qm;
 
+	int forwardBack = 0;
+
 	private static gridFloatReader gfl = new gridFloatReader("ned_86879038");
 
 
@@ -52,17 +54,22 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	double aspectRatio = 1;
 	double zNear = 0.1;
 	double zFar = 100;
-	double[] eyePos = {1, 1, 3};
-	double[] targetPos = {0, 0, 0};
+	double[] eyePos = {0, 0, 0};
 	double[] upVector = {0, 0, 1};
 	double dIncrement = .2;
 	double aIncrement = 0.1;
 	double eyeDist = Math.sqrt(eyePos[0] * eyePos[0] + eyePos[1] * eyePos[1] + eyePos[2] * eyePos[2]);
-	double phi = 0;
-	double theta = 90.0 / 180.0 * Math.PI;
+
+	public int face = 0;
+	public double facePos = 0;
+
+
+	double horizontalAngle = 0; //
+	double vericalAngle = 90.0 / 180.0 * Math.PI; //vertical angle
 	private GLCanvas canvas;
 
-	ActionListener redOp = new ActionListener() {
+	ActionListener redOp = new ActionListener()
+	{
 		@Override
 		public void actionPerformed(ActionEvent arg0)
 		{
@@ -147,21 +154,34 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		//Get context
 		GL2 gl = glAutoDrawable.getGL().getGL2();
 
+
+		//else
+
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		//Set-up the camera
-		glu.gluLookAt(eyePos[0], eyePos[2], eyePos[1], targetPos[0], targetPos[1], targetPos[2], upVector[0], upVector[1], upVector[2]);
+		glu.gluLookAt(eyePos[0], eyePos[1], eyePos[2], GetLookVector()[0] + eyePos[0],  GetLookVector()[1] +eyePos[1], eyePos[2], upVector[0], upVector[1], upVector[2]);
+
 		//glu.gluLookAt(3, 0, 0, 0, 0, 0, 0, 1, 0);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		gl.glPushMatrix();
 		{
-			gl.glTranslatef(0,0,-0.5f);
+			gl.glTranslatef(0, 0, 0.5f);
 			/*gl.glRotated(45, 0, 0, 2);
 			gl.glRotated(-20, 0, 1, 0);
 			gl.glRotated(-20, 1, 0, 0);*/
 			qm.DrawArea(gl);
 		}
 		gl.glPopMatrix();
+
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+
+
+		if (forwardBack == 1)
+		{
+			forwardBack = 0;
+		}
+
 	}
 
 
@@ -201,6 +221,26 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	}
 
 
+	private void TurnRight(double turn)
+	{
+		facePos += turn;
+		if (facePos > 1)
+		{
+			face = (face + 1) % 4;
+			facePos -= 2;
+		}
+	}
+
+	private void TurnLeft(double turn)
+	{
+		facePos -= turn;
+		if (facePos < -1)
+		{
+			face = (face + 5) % 4;
+			facePos += 2;
+		}
+	}
+
 	//from rotated color cube
 	@Override
 	public void keyTyped(KeyEvent ke)
@@ -209,15 +249,13 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		boolean updateSpherical = false, updateCartesian = false;
 		switch (key)
 		{
-			case 'A'://away, rightish
-			case 'a':
-				eyePos[0] -= dIncrement;
-				updateSpherical = true;
+			case 'q'://away, rightish
+			case 'Q':
+				TurnRight(.1);
 				break;
-			case 'y':
-			case 'Y'://down
-				eyePos[2] -= dIncrement;
-				updateSpherical = true;
+			case 'e':
+			case 'E'://down
+				TurnLeft(.1);
 				break;
 			case 'z':
 			case 'Z'://in, leftish
@@ -231,29 +269,41 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 				break;
 			case 'd'://x,t are horizontal opposites
 			case 'D'://see r//p-z are vertical opposites
-				theta -= aIncrement;
+				vericalAngle -= aIncrement;
 				updateCartesian = true;
 				break;
-			case 'p'://down after a spooky flip
-			case 'P':
-				phi -= aIncrement;
-				updateCartesian = true;
+			case 'S'://down after a spooky flip
+			case 's':
+				eyePos[0] -= GetMovement()[0];
+				eyePos[1] -= GetMovement()[1];
 				break;
-		}
-
-		if (updateSpherical)
-		{
-			eyeDist = Math.sqrt(eyePos[0] * eyePos[0] + eyePos[1] * eyePos[1] + eyePos[2] * eyePos[2]);
-			theta = Math.atan2(eyePos[1], eyePos[0]);
-			phi = Math.acos(eyePos[2] / eyeDist);
-		}
-		if (updateCartesian)
-		{
-			eyePos[0] = eyeDist * Math.cos(theta) * Math.sin(phi);
-			eyePos[1] = eyeDist * Math.sin(theta) * Math.sin(phi);
-			eyePos[2] = eyeDist * Math.cos(phi);
+			case 'w':
+			case 'W':
+				eyePos[0] += GetMovement()[0];
+				eyePos[1] += GetMovement()[1];
+				break;
 		}
 		//Redisplay
 		canvas.display();
+	}
+
+	public double[] GetLookVector()
+	{
+		switch (face)
+		{
+			case 0://forward
+				return new double[]{facePos, 1};
+			case 1://right
+				return new double[]{1, -facePos};
+			case 2://down
+				return new double[]{-facePos, -1};
+			default://left
+				return new double[]{-1, facePos};
+		}
+	}
+
+	public double[] GetMovement()
+	{
+		return GetLookVector();
 	}
 }
