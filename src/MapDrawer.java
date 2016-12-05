@@ -13,12 +13,10 @@ import java.awt.event.*;
  * Main class
  * Created by alvarpq on 10/5/2016.
  */
-public class MapDrawer extends JFrame implements GLEventListener, KeyListener
+public class MapDrawer extends JFrame implements GLEventListener, KeyListener, MouseMotionListener
 {
 	static private int stepNum;
 	private static QuadMap qm;
-
-	int forwardBack = 0;
 
 	private static gridFloatReader gfl = new gridFloatReader("ned_86879038");
 
@@ -52,20 +50,16 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	float width = 1200;
 	double fov = 45;
 	double aspectRatio = 1;
-	double zNear = 0.1;
-	double zFar = 100;
-	double[] eyePos = {0, 0, 0};
+	double zNear = 1;
+	double zFar = 1000;
+	double[] eyePos = {80, 80, 0};
 	double[] upVector = {0, 0, 1};
-	double dIncrement = .2;
-	double aIncrement = 0.1;
-	double eyeDist = Math.sqrt(eyePos[0] * eyePos[0] + eyePos[1] * eyePos[1] + eyePos[2] * eyePos[2]);
 
 	public int face = 0;
 	public double facePos = 0;
+	public double verticalDir = 0;
 
 
-	double horizontalAngle = 0; //
-	double vericalAngle = 90.0 / 180.0 * Math.PI; //vertical angle
 	private GLCanvas canvas;
 
 	ActionListener redOp = new ActionListener()
@@ -87,6 +81,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 
 		canvas = new GLCanvas();
 		canvas.addGLEventListener(this);
+		canvas.addMouseMotionListener(this);
 
 		getContentPane().add(canvas);
 		menuParts.setPreferredSize(new Dimension((int) width, 80));
@@ -123,6 +118,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		menuParts.add(lab1);
 
 		menuParts.add(inputString);
+		inputString.setText("ned_86879038");
 		menuParts.add(go);
 		menuParts.add(rStart);
 		menuParts.add(gStart);
@@ -134,7 +130,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 
 		stepNum = itNum.getValue();
 
-		qm = new QuadMap(gfl, false, Color.black, Color.white, stepNum);
+		qm = new QuadMap(gfl, false, Color.black, Color.GREEN, stepNum);
 		mp = new MapDrawer(qm);
 	}
 
@@ -160,27 +156,23 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		//Set-up the camera
-		glu.gluLookAt(eyePos[0], eyePos[1], eyePos[2], GetLookVector()[0] + eyePos[0],  GetLookVector()[1] +eyePos[1], eyePos[2], upVector[0], upVector[1], upVector[2]);
+
+			eyePos[2] = (gfl.height[(int)eyePos[0]][(int)eyePos[1]] - gfl.minHeight + 100) * .3;
+
+
+		glu.gluLookAt(eyePos[0], eyePos[1], eyePos[2], GetLookVector()[0] + eyePos[0],  GetLookVector()[1] +eyePos[1], eyePos[2] + verticalDir, upVector[0], upVector[1], upVector[2]);
 
 		//glu.gluLookAt(3, 0, 0, 0, 0, 0, 0, 1, 0);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		gl.glPushMatrix();
 		{
-			gl.glTranslatef(0, 0, 0.5f);
+			gl.glScalef(1,1,1f);
 			/*gl.glRotated(45, 0, 0, 2);
 			gl.glRotated(-20, 0, 1, 0);
 			gl.glRotated(-20, 1, 0, 0);*/
 			qm.DrawArea(gl);
 		}
 		gl.glPopMatrix();
-
-		gl.glMatrixMode(GL2.GL_PROJECTION);
-
-
-		if (forwardBack == 1)
-		{
-			forwardBack = 0;
-		}
 
 	}
 
@@ -236,7 +228,7 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		facePos -= turn;
 		if (facePos < -1)
 		{
-			face = (face + 5) % 4;
+			face = (face + 3) % 4;
 			facePos += 2;
 		}
 	}
@@ -246,42 +238,50 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 	public void keyTyped(KeyEvent ke)
 	{
 		char key = ke.getKeyChar();
-		boolean updateSpherical = false, updateCartesian = false;
 		switch (key)
 		{
 			case 'q'://away, rightish
 			case 'Q':
-				TurnRight(.1);
+				TurnLeft(.1);
 				break;
 			case 'e':
 			case 'E'://down
-				TurnLeft(.1);
+				TurnRight(.1);
 				break;
-			case 'z':
-			case 'Z'://in, leftish
-				eyePos[1] -= dIncrement;
-				updateSpherical = true;
+			case ' '://in, leftish
+				eyePos[2] += 1;
 				break;
-			case 'r':
-			case 'R'://just kind of makes it...disappear
-				eyeDist -= dIncrement;
-				updateCartesian = true;
+			case 'x':
+			case 'X'://just kind of makes it...disappear
+				eyePos[2] -=1;
 				break;
 			case 'd'://x,t are horizontal opposites
 			case 'D'://see r//p-z are vertical opposites
-				vericalAngle -= aIncrement;
-				updateCartesian = true;
+				face = (face + 1) % 4;
+				eyePos[0] += GetMovement()[0];
+				eyePos[1] += GetMovement()[1];
+				face = (face + 3) % 4;
 				break;
+			case 'a':
+			case 'A':
+				face = (face + 3) % 4;
+				eyePos[0] += GetMovement()[0];
+				eyePos[1] += GetMovement()[1];
+				face = (face + 1) % 4;
 			case 'S'://down after a spooky flip
 			case 's':
-				eyePos[0] -= GetMovement()[0];
-				eyePos[1] -= GetMovement()[1];
+				eyePos[0] -= GetMovement()[0]/2;
+				eyePos[1] -= GetMovement()[1]/2;
 				break;
 			case 'w':
 			case 'W':
-				eyePos[0] += GetMovement()[0];
-				eyePos[1] += GetMovement()[1];
+				eyePos[0] += GetMovement()[0]/2;
+				eyePos[1] += GetMovement()[1]/2;
+				System.out.println(eyePos[0] + "," + eyePos[1] + "," + eyePos[2]);
 				break;
+			case 'z':
+			case 'Z':
+				verticalDir +=.1;
 		}
 		//Redisplay
 		canvas.display();
@@ -302,8 +302,41 @@ public class MapDrawer extends JFrame implements GLEventListener, KeyListener
 		}
 	}
 
+	public void LookVertical(double move)
+	{
+		verticalDir -=move;
+		if(verticalDir > 4)
+		{
+			verticalDir = 4;
+			return;
+		}
+		else if(verticalDir < -4)
+		{
+			verticalDir = -4;
+		}
+	}
+
 	public double[] GetMovement()
 	{
 		return GetLookVector();
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		try {
+			Robot rob = new Robot();
+			rob.mouseMove(canvas.getWidth()/2, canvas.getHeight()/2);
+		} catch (AWTException x) {
+			x.printStackTrace();
+		}
+		LookVertical((e.getYOnScreen()-(double)canvas.getHeight()/2)/((double)canvas.getHeight()/2));
+		TurnRight((e.getXOnScreen()-(double)canvas.getWidth()/2)/((double)canvas.getWidth()/2));
+		canvas.display();
+
 	}
 }

@@ -11,7 +11,6 @@ public class QuadMap
 	int steps;
 	boolean wire;
 	private Square[][] strips;
-	private float scaling = 1;
 
 	public QuadMap(gridFloatReader gfl, boolean wire, Color lowColor, Color highColor, int stepNum)
 	{
@@ -59,7 +58,7 @@ public class QuadMap
 		{
 			if(wire)
 			{
-				gl.glBegin(GL2.GL_QUADS);
+				gl.glBegin(GL2.GL_LINES);
 			} else
 			{
 				gl.glBegin(GL2.GL_QUAD_STRIP);

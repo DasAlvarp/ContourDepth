@@ -10,6 +10,7 @@ public class Square
 	private double[][] heights = new double[2][2];
 	public int x;
 	public int y;
+	public double hDif;
 
 	private Coordinate[][] corners = new Coordinate[2][2];
 
@@ -20,10 +21,10 @@ public class Square
 		this.y = y;
 
 		//scaling factors to make it square and boxy
-		double xScale = 2.0 / (double) gfl.height.length;
-		double yScale = 2.0 / (double) gfl.height[0].length;
+		double xScale = 1;//2.0 / (double) gfl.height.length;
+		double yScale = 1;//2.0 / (double) gfl.height[0].length;
 
-		double hDif = gfl.maxHeight - gfl.minHeight;
+		hDif =gfl.maxHeight-gfl.minHeight;
 
 		corners[0][0] = new Coordinate(((double) x) * xScale - 1.0, ((double) y) * yScale - 1.0);
 		corners[0][1] = new Coordinate((double) x * xScale - 1.0, (y + 1.0) * yScale - 1.0);
@@ -95,7 +96,7 @@ public class Square
 				{
 					if (sideTrue[x])
 					{
-						gl.glVertex3d(sideCoords[x].x, sideCoords[x].y, height);
+						gl.glVertex3d(sideCoords[x].x, sideCoords[x].y, height * hDif * .3);
 					}
 				}
 			}gl.glEnd();
@@ -104,14 +105,14 @@ public class Square
 		{
 			gl.glBegin(GL2.GL_LINES);
 			{
-				gl.glVertex3d(sideCoords[1].x, sideCoords[1].y, height);
-				gl.glVertex3d(sideCoords[0].x, sideCoords[0].y, height);
+				gl.glVertex3d(sideCoords[1].x, sideCoords[1].y, height * hDif * .3);
+				gl.glVertex3d(sideCoords[0].x, sideCoords[0].y, height * hDif * .3);
 			}gl.glEnd();
 
 			gl.glBegin(GL2.GL_LINES);
 			{
-				gl.glVertex3d(sideCoords[2].x, sideCoords[2].y, height);
-				gl.glVertex3d(sideCoords[3].x, sideCoords[3].y, height);
+				gl.glVertex3d(sideCoords[2].x, sideCoords[2].y, height * hDif * .3);
+				gl.glVertex3d(sideCoords[3].x, sideCoords[3].y, height * hDif * .3);
 			}gl.glEnd();
 		}
 	}
@@ -123,9 +124,9 @@ public class Square
 		color = Utilities.Add(color, Utilities.Multiply((heights[1][1]), Utilities.Subtract(Utilities.ColorToDouble(cmax), Utilities.ColorToDouble(cmin))));
 
 		gl.glColor3d(color[0], color[1], color[2]);
-		gl.glVertex3d(corners[1][1].x, corners[1][1].y, heights[1][1]);
-		gl.glVertex3d(corners[0][1].x, corners[0][1].y, heights[0][1]);
-		gl.glVertex3d(corners[1][0].x, corners[1][0].y, heights[1][0]);
-		gl.glVertex3d(corners[0][0].x, corners[0][0].y, heights[0][0]);
+		gl.glVertex3d(corners[1][1].x, corners[1][1].y, heights[1][1] * hDif * .3);
+		gl.glVertex3d(corners[0][1].x, corners[0][1].y, heights[0][1] * hDif * .3);
+		gl.glVertex3d(corners[1][0].x, corners[1][0].y, heights[1][0] * hDif * .3);
+		gl.glVertex3d(corners[0][0].x, corners[0][0].y, heights[0][0] * hDif * .3);
 	}
 }
