@@ -122,11 +122,29 @@ public class Square
 	{
 		double[] color = Utilities.ColorToDouble(cmin);
 		color = Utilities.Add(color, Utilities.Multiply((heights[1][1]), Utilities.Subtract(Utilities.ColorToDouble(cmax), Utilities.ColorToDouble(cmin))));
-
+		double[] normal = Utilities.GetCross(GetVectors()[0], GetVectors()[1]);
+		gl.glNormal3d(normal[0],normal[1],normal[2]);
 		gl.glColor3d(color[0], color[1], color[2]);
 		gl.glVertex3d(corners[1][1].x, corners[1][1].y, heights[1][1] * hDif * .3);
 		gl.glVertex3d(corners[0][1].x, corners[0][1].y, heights[0][1] * hDif * .3);
 		gl.glVertex3d(corners[1][0].x, corners[1][0].y, heights[1][0] * hDif * .3);
 		gl.glVertex3d(corners[0][0].x, corners[0][0].y, heights[0][0] * hDif * .3);
+	}
+
+
+	public double[][] GetVectors()
+	{
+		double[] v1 = new double[3];
+		double[] v2 = new double[3];
+
+		v1[0] = corners[1][0].x-corners[0][0].x;
+		v1[1] = corners[1][0].y-corners[0][0].y;
+		v1[2] = (heights[1][0] - heights[0][0]) * hDif * .3;
+
+		v2[0] = corners[0][1].x-corners[0][0].x;
+		v2[1] = corners[0][1].y-corners[0][0].y;
+		v2[2] = (heights[0][1] - heights[0][0]) * hDif * .3;
+		return new double[][] {v1,v2};
+
 	}
 }
